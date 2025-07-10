@@ -29,9 +29,9 @@ function formatDate(dateString) {
 }
 
 // Format price with commas
-function formatPrice(price) {
-  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+// function formatPrice(price) {
+//   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+// }
 
 // Function to format address with proper line breaks
 function formatAddress(address) {
@@ -308,14 +308,7 @@ function createVoucherHTML(orderData) {
             <td style="border: 1px solid #000; padding: 8px; text-align: center; color: #000; font-family: Arial, sans-serif;">
               လုံး
             </td>
-            <td style="border: 1px solid #000; padding: 8px; text-align: right; color: #000; font-family: Arial, sans-serif;">
-              ${formatPrice(snapshotData.productPrice)}.00
-            </td>
-            <td style="border: 1px solid #000; padding: 8px; text-align: right; color: #000; font-family: Arial, sans-serif; font-weight: bold;">
-              ${formatPrice(
-                snapshotData.productPrice * snapshotData.quantity
-              )}.00
-            </td>
+          
             <td style="border: 1px solid #000; padding: 8px; text-align: center; color: #000; font-family: Arial, sans-serif;">
               
             </td>
@@ -331,11 +324,7 @@ function createVoucherHTML(orderData) {
             <td colspan="2" style="border: 1px solid #000; padding: 8px; text-align: center; font-weight: bold; color: #000; font-family: Arial, sans-serif;">
               Invoice Total:
             </td>
-            <td style="border: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; color: #000; font-family: Arial, sans-serif; font-size: 16px;">
-              ${formatPrice(
-                snapshotData.productPrice * snapshotData.quantity
-              )}.00
-            </td>
+           
             <td style="border: 1px solid #000; padding: 8px;"></td>
           </tr>
           
