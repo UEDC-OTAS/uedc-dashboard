@@ -345,7 +345,7 @@ const CustomerSupport = () => {
                             chgStatusTicket(ticket._id, { hasSeen: true });
                           }}
                           className="bg-primary hover:bg-primary/80 text-white p-3 rounded-lg transition-colors"
-                          title=""
+                          title="to chat"
                         >
                           <RiCustomerService2Fill size={18} color="white" />
                         </button>
@@ -354,7 +354,7 @@ const CustomerSupport = () => {
                             chgStatusTicket(ticket._id, { hasSolved: true });
                           }}
                           className="hover:bg-gray-200 text-primary border border-primary p-3 rounded-lg transition-colors"
-                          title=""
+                          title="mark as solved"
                         >
                           <MdOutlineMarkChatRead size={18} />
                         </button>

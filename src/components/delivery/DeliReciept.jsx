@@ -179,7 +179,7 @@ function DeliReciept({
                     or drag and drop
                   </div>
                   <p className="text-xs text-gray-500">
-                    PNG, JPG, GIF up to 5MB (Max 5 images)
+                    PNG, JPG, GIF up to 5MB
                   </p>
                 </div>
               </div>
