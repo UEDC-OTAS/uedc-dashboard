@@ -5,7 +5,7 @@ const MobileBlocker = ({ children }) => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 700); // 768px is a common threshold for mobile devices
+      setIsMobile(window.innerWidth < 800); // 768px is a common threshold for mobile devices
     };
 
     handleResize(); // Initial check

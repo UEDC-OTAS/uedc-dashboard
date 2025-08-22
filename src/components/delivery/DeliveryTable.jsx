@@ -11,6 +11,7 @@ const DeliveryTable = ({
   passTab,
   passPage,
   loading,
+  removeOrder,
 }) => {
   console.log("orders", orders);
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const DeliveryTable = ({
     const res = await chgOrderStatus({ orderId, data });
     // console.log("res", res);
     if (res.code === 200) {
-      refreshOrders();
+      removeOrder(orderId);
     }
   };
 

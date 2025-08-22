@@ -637,6 +637,7 @@ const AddProduct = () => {
                   accept="image/*"
                   multiple
                   onChange={(e) => handleImageUpload(e.target.files)}
+                  max={5}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
 
@@ -685,11 +686,6 @@ const AddProduct = () => {
                     >
                       ×
                     </button>
-
-                    {/* Image Info */}
-                    <div className="mt-1 text-xs text-gray-500 truncate">
-                      {image.name}
-                    </div>
                   </div>
                 ))}
               </div>

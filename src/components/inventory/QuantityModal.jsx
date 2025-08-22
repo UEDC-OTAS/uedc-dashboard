@@ -3,8 +3,10 @@ import Modal from "../utli/Modal";
 import updateQuantity from "../../api/inventoryApi/UpdateQuantity";
 
 const QuantityModal = ({ isOpen, onClose, onSubmit, product }) => {
-  // console.log("product", product);
+  console.log("product", product);
   const [quantity, setQuantity] = useState(0);
+  const [newQuantity, setNewQuantity] = useState(0);
+  const [method, setMethod] = useState(null);
 
   useEffect(() => {
     setQuantity(product?.stock);
@@ -12,13 +14,15 @@ const QuantityModal = ({ isOpen, onClose, onSubmit, product }) => {
 
   // Function to handle decrementing the quantity
   const handleDecrement = () => {
+    setMethod("subtract");
     // Ensure quantity does not go below 0
-    setQuantity((prevQuantity) => Math.max(0, prevQuantity - 1));
+    // setQuantity((prevQuantity) => Math.max(0, prevQuantity - 1));
   };
 
   // Function to handle incrementing the quantity
   const handleIncrement = () => {
-    setQuantity((prevQuantity) => prevQuantity + 1);
+    setMethod("add");
+    // setQuantity((prevQuantity) => prevQuantity + 1);
   };
 
   // Function to handle direct input changes in the input field
@@ -31,10 +35,10 @@ const QuantityModal = ({ isOpen, onClose, onSubmit, product }) => {
     // Check if the parsed value is a valid number
     if (!isNaN(newQuantity)) {
       // If valid, update the quantity state, ensuring it's not negative
-      setQuantity(Math.max(0, newQuantity));
+      setNewQuantity(Math.max(0, newQuantity));
     } else if (value === "") {
       // If the input is empty, set quantity to 0
-      setQuantity(0);
+      setNewQuantity(0);
     }
     // If the input is not a number and not empty, do not update the state
   };
@@ -48,11 +52,12 @@ const QuantityModal = ({ isOpen, onClose, onSubmit, product }) => {
 
     const res = await updateQuantity({
       id: product.saleCode,
-      data: { newQuantity: quantity },
+      data: { quantityChange: method === "add" ? newQuantity : -newQuantity },
     });
     // console.log(res);
     if (res.code === 200) {
       onClose();
+      setMethod(null);
       // onSubmit();
     }
   };
@@ -94,15 +99,15 @@ const QuantityModal = ({ isOpen, onClose, onSubmit, product }) => {
               </svg>
             </button>
 
-            {/* Quantity input field */}
             <input
               type="number"
+              readOnly
               // Conditional formatting for the quantity display:
               // If quantity is 0, display '0'.
               // Otherwise, convert to string and pad with a leading '0' if it's a single digit.
-              value={quantity === 0 ? "0" : String(quantity).padStart(2, "0")}
+              value={quantity}
               onChange={handleInputChange}
-              className="w-28 py-3 text-center text-2xl font-bold text-gray-800 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200 ease-in-out [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-28 py-3 text-center text-2xl font-bold text-gray-800 border-2 border-gray-300 rounded-lg focus:outline-none transition duration-200 ease-in-out [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               aria-label="Current quantity"
             />
 
@@ -128,6 +133,42 @@ const QuantityModal = ({ isOpen, onClose, onSubmit, product }) => {
             </button>
           </div>
         </div>
+
+        {method && (
+          <div className="border border-gray-300 flex items-center justify-between px-5 py-3 rounded-lg">
+            <div>
+              <p className="text-2xl font-bold">{quantity}</p>
+            </div>
+            <div>
+              {method === "add" && <p className="text-2xl font-bold">+</p>}
+              {method === "subtract" && <p className="text-2xl font-bold">-</p>}
+            </div>
+            {/* Quantity input field */}
+
+            <input
+              type="number"
+              // Conditional formatting for the quantity display:
+              // If quantity is 0, display '0'.
+              // Otherwise, convert to string and pad with a leading '0' if it's a single digit.
+              value={
+                newQuantity === 0 ? "0" : String(newQuantity).padStart(2, "0")
+              }
+              onChange={handleInputChange}
+              className="w-24 py-3 text-center text-2xl font-bold text-gray-800 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200 ease-in-out [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              aria-label="Current quantity"
+            />
+
+            <p className="text-2xl font-bold">=</p>
+            <div>
+              {method === "add" && (
+                <p className="text-2xl font-bold">{quantity + newQuantity}</p>
+              )}
+              {method === "subtract" && (
+                <p className="text-2xl font-bold">{quantity - newQuantity}</p>
+              )}
+            </div>
+          </div>
+        )}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Stock Name */}
           <div>

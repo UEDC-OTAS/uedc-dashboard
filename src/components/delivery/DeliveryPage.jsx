@@ -78,6 +78,15 @@ function DeliveryPage() {
     setActivePage(page);
   };
 
+  const removeOrder = async (orderId) => {
+    setOrders((prevOrders) =>
+      prevOrders.filter((order) => order._id !== orderId)
+    );
+    setSelectedOrder(null);
+  };
+
+  console.log(selectedOrder);
+
   useEffect(() => {
     getOrders();
   }, [activeTab, activePage]);
@@ -105,9 +114,9 @@ function DeliveryPage() {
           <DeliveryTable
             orders={orders}
             passOrder={passOrder}
+            removeOrder={removeOrder}
             refreshOrders={() => {
               setSelectedOrder(null);
-              getOrders();
             }}
             loading={loading}
             passTab={passTab}
@@ -123,10 +132,8 @@ function DeliveryPage() {
           {selectedOrder && (
             <DeliReciept
               selectedOrder={selectedOrder}
-              refreshOrders={() => {
-                setSelectedOrder(null);
-                getOrders();
-              }}
+              refreshOrders={setSelectedOrder(null)}
+              removeOrder={removeOrder}
               loading={loading}
               receipt={receipt}
               onClose={() => setSelectedOrder(null)}
