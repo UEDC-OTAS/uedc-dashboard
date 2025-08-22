@@ -78,22 +78,13 @@ function DeliveryPage() {
     setActivePage(page);
   };
 
-  const removeOrder = async (orderId) => {
-    setOrders((prevOrders) =>
-      prevOrders.filter((order) => order._id !== orderId)
-    );
-    setSelectedOrder(null);
-  };
-
-  console.log(selectedOrder);
-
   useEffect(() => {
     getOrders();
   }, [activeTab, activePage]);
   return (
     <div className="px-4">
       <div className="flex items-center justify-between ">
-        <h1 className="header">Delivery Management</h1>
+        <h1 className="header">Delivery</h1>
         <div className="flex items-center gap-10">
           <div className="w-[400px]">
             <SearchBar
@@ -114,9 +105,9 @@ function DeliveryPage() {
           <DeliveryTable
             orders={orders}
             passOrder={passOrder}
-            removeOrder={removeOrder}
             refreshOrders={() => {
               setSelectedOrder(null);
+              getOrders();
             }}
             loading={loading}
             passTab={passTab}
@@ -132,8 +123,10 @@ function DeliveryPage() {
           {selectedOrder && (
             <DeliReciept
               selectedOrder={selectedOrder}
-              refreshOrders={setSelectedOrder(null)}
-              removeOrder={removeOrder}
+              refreshOrders={() => {
+                setSelectedOrder(null);
+                getOrders();
+              }}
               loading={loading}
               receipt={receipt}
               onClose={() => setSelectedOrder(null)}

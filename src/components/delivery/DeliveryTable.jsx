@@ -7,13 +7,11 @@ import { Eye } from "lucide-react";
 const DeliveryTable = ({
   orders,
   passOrder,
-  refreshOrders,
   passTab,
-  passPage,
   loading,
   removeOrder,
 }) => {
-  console.log("orders", orders);
+  // console.log("orders", orders);
   const navigate = useNavigate();
   const role = JSON.parse(localStorage.getItem("uedc-user"))?.role;
   const [currentPage, setCurrentPage] = useState(1);
