@@ -337,7 +337,7 @@ const CustomerSupport = () => {
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
-                        {!ticket.hasSolved && !ticket.hasSeen && (
+                        {!ticket.hasSolved && (
                           <button
                             onClick={() => {
                               window.open(
