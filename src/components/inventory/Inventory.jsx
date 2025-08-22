@@ -120,7 +120,7 @@ function Inventory() {
           <div className="w-[400px]">
             <SearchBar
               onSearch={(name) => (!name ? getProducts() : null)}
-              placeholder="Search Product with name or Product Code"
+              placeholder="Search Product Name"
               onClick={searchFunction}
             />
           </div>

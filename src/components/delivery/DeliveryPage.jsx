@@ -89,7 +89,7 @@ function DeliveryPage() {
           <div className="w-[400px]">
             <SearchBar
               onSearch={(name) => (!name ? getOrders() : null)}
-              placeholder="Search Product with name or Product Code"
+              placeholder="Search Customer Name"
               onClick={searchFunction}
             />
           </div>
