@@ -336,29 +336,31 @@ const CustomerSupport = () => {
                       {getStatusBadge(ticket)}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => {
-                            window.open(
-                              `https://app.manychat.com/fb106217229088030/chat/${ticket.ticketId}`
-                            );
-                            chgStatusTicket(ticket._id, { hasSeen: true });
-                          }}
-                          className="bg-primary hover:bg-primary/80 text-white p-3 rounded-lg transition-colors"
-                          title="to chat"
-                        >
-                          <RiCustomerService2Fill size={18} color="white" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            chgStatusTicket(ticket._id, { hasSolved: true });
-                          }}
-                          className="hover:bg-gray-200 text-primary border border-primary p-3 rounded-lg transition-colors"
-                          title="mark as solved"
-                        >
-                          <MdOutlineMarkChatRead size={18} />
-                        </button>
-                      </div>
+                      {ticket.hasSolved && (
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => {
+                              window.open(
+                                `https://app.manychat.com/fb106217229088030/chat/${ticket.ticketId}`
+                              );
+                              chgStatusTicket(ticket._id, { hasSeen: true });
+                            }}
+                            className="bg-primary hover:bg-primary/80 text-white p-3 rounded-lg transition-colors"
+                            title="to chat"
+                          >
+                            <RiCustomerService2Fill size={18} color="white" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              chgStatusTicket(ticket._id, { hasSolved: true });
+                            }}
+                            className="hover:bg-gray-200 text-primary border border-primary p-3 rounded-lg transition-colors"
+                            title="mark as solved"
+                          >
+                            <MdOutlineMarkChatRead size={18} />
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))
