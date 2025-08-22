@@ -158,7 +158,7 @@ const CustomerSupport = () => {
   const filteredTickets = tickets.filter((ticket) => {
     if (filter === "unseen") return !ticket.hasSeen && !ticket.hasSolved;
     if (filter === "solved") return ticket.hasSolved;
-    if (filter === "unsolved") return !ticket.hasSolved;
+    if (filter === "unsolved") return !ticket.hasSolved && ticket.hasSeen;
     return true;
   });
 
@@ -238,7 +238,7 @@ const CustomerSupport = () => {
                     : "bg-gray-100 text-gray-900"
                 }`}
               >
-                {tickets.filter((t) => !t.hasSolved).length}
+                {tickets.filter((t) => !t.hasSolved && t.hasSeen).length}
               </span>
             </button>
             <button
@@ -257,7 +257,7 @@ const CustomerSupport = () => {
                     : "bg-gray-100 text-gray-900"
                 }`}
               >
-                {tickets.filter((t) => t.hasSolved).length}
+                {tickets.filter((t) => t.hasSolved && t.hasSeen).length}
               </span>
             </button>
           </nav>
@@ -336,8 +336,8 @@ const CustomerSupport = () => {
                       {getStatusBadge(ticket)}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                      {ticket.hasSolved && (
-                        <div className="flex space-x-2">
+                      <div className="flex space-x-2">
+                        {!ticket.hasSolved && !ticket.hasSeen && (
                           <button
                             onClick={() => {
                               window.open(
@@ -350,6 +350,8 @@ const CustomerSupport = () => {
                           >
                             <RiCustomerService2Fill size={18} color="white" />
                           </button>
+                        )}
+                        {ticket.hasSeen && !ticket.hasSolved && (
                           <button
                             onClick={() => {
                               chgStatusTicket(ticket._id, { hasSolved: true });
@@ -359,8 +361,8 @@ const CustomerSupport = () => {
                           >
                             <MdOutlineMarkChatRead size={18} />
                           </button>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
