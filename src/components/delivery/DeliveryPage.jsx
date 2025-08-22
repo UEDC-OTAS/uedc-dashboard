@@ -84,7 +84,7 @@ function DeliveryPage() {
   return (
     <div className="px-4">
       <div className="flex items-center justify-between ">
-        <h1 className="header">Delivery</h1>
+        <h1 className="header">Delivery Management</h1>
         <div className="flex items-center gap-10">
           <div className="w-[400px]">
             <SearchBar

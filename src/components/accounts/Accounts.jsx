@@ -27,7 +27,7 @@ function Accounts() {
   return (
     <div className="w-full px-4">
       <div className="flex items-center justify-between ">
-        <h1 className="header">Staff</h1>
+        <h1 className="header">Staff Account Management</h1>
         <div className="flex items-center gap-10">
           {/* <div className="w-[400px]">
             <SearchBar placeholder="Search Product with name or Product Code" />
