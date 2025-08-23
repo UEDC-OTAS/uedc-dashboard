@@ -107,64 +107,66 @@ const AccountTable = ({ users, refetch }) => {
                     </p>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => {
-                          setIsOpen(true);
-                          setIsPasswordOpen(false);
-                          setSelectedUser(user);
-                        }}
-                        className="bg-white hover:bg-gray-100 border border-gray-800 text-black p-3 rounded-lg transition-colors"
-                        title="Update Department"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24px"
-                          viewBox="0 -960 960 960"
-                          width="24px"
-                          fill="black"
+                    {user.role !== "admin" && (
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => {
+                            setIsOpen(true);
+                            setIsPasswordOpen(false);
+                            setSelectedUser(user);
+                          }}
+                          className="bg-white hover:bg-gray-100 border border-gray-800 text-black p-3 rounded-lg transition-colors"
+                          title="Update Department"
                         >
-                          <path d="M480-240Zm-320 80v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q37 0 73 4.5t72 14.5l-67 68q-20-3-39-5t-39-2q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32h240v80H160Zm400 40v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T903-340L683-120H560Zm300-263-37-37 37 37ZM620-180h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19ZM480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Z" />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setIsOpen(true);
-                          setIsPasswordOpen(true);
-                          setSelectedUser(user);
-                        }}
-                        className="bg-white hover:bg-gray-100 border border-gray-800 text-black p-3 rounded-lg transition-colors"
-                        title="update password"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24px"
-                          viewBox="0 -960 960 960"
-                          width="24px"
-                          fill="black"
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="24px"
+                            viewBox="0 -960 960 960"
+                            width="24px"
+                            fill="black"
+                          >
+                            <path d="M480-240Zm-320 80v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q37 0 73 4.5t72 14.5l-67 68q-20-3-39-5t-39-2q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32h240v80H160Zm400 40v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T903-340L683-120H560Zm300-263-37-37 37 37ZM620-180h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19ZM480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsOpen(true);
+                            setIsPasswordOpen(true);
+                            setSelectedUser(user);
+                          }}
+                          className="bg-white hover:bg-gray-100 border border-gray-800 text-black p-3 rounded-lg transition-colors"
+                          title="update password"
                         >
-                          <path d="M280-400q-33 0-56.5-23.5T200-480q0-33 23.5-56.5T280-560q33 0 56.5 23.5T360-480q0 33-23.5 56.5T280-400Zm0 160q-100 0-170-70T40-480q0-100 70-170t170-70q67 0 121.5 33t86.5 87h352l120 120-180 180-80-60-80 60-85-60h-47q-32 54-86.5 87T280-240Zm0-80q56 0 98.5-34t56.5-86h125l58 41 82-61 71 55 75-75-40-40H435q-14-52-56.5-86T280-640q-66 0-113 47t-47 113q0 66 47 113t113 47Z" />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setIsDeleteModalOpen(true);
-                          setSelectedUser(user);
-                        }}
-                        className="bg-white hover:bg-gray-100 border border-gray-800 text-black p-3 rounded-lg transition-colors"
-                        title="delete"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24px"
-                          viewBox="0 -960 960 960"
-                          width="24px"
-                          fill="black"
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="24px"
+                            viewBox="0 -960 960 960"
+                            width="24px"
+                            fill="black"
+                          >
+                            <path d="M280-400q-33 0-56.5-23.5T200-480q0-33 23.5-56.5T280-560q33 0 56.5 23.5T360-480q0 33-23.5 56.5T280-400Zm0 160q-100 0-170-70T40-480q0-100 70-170t170-70q67 0 121.5 33t86.5 87h352l120 120-180 180-80-60-80 60-85-60h-47q-32 54-86.5 87T280-240Zm0-80q56 0 98.5-34t56.5-86h125l58 41 82-61 71 55 75-75-40-40H435q-14-52-56.5-86T280-640q-66 0-113 47t-47 113q0 66 47 113t113 47Z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsDeleteModalOpen(true);
+                            setSelectedUser(user);
+                          }}
+                          className="bg-white hover:bg-gray-100 border border-gray-800 text-black p-3 rounded-lg transition-colors"
+                          title="delete"
                         >
-                          <path d="M538-538ZM424-424Zm56 264q51 0 98-15.5t88-44.5q-41-29-88-44.5T480-280q-51 0-98 15.5T294-220q41 29 88 44.5t98 15.5Zm106-328-57-57q5-8 8-17t3-18q0-25-17.5-42.5T480-640q-9 0-18 3t-17 8l-57-57q19-17 42.5-25.5T480-720q58 0 99 41t41 99q0 26-8.5 49.5T586-488Zm228 228-58-58q22-37 33-78t11-84q0-134-93-227t-227-93q-43 0-84 11t-78 33l-58-58q49-32 105-49t115-17q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 59-17 115t-49 105ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-59 16.5-115T145-701L27-820l57-57L876-85l-57 57-615-614q-22 37-33 78t-11 84q0 57 19 109t55 95q54-41 116.5-62.5T480-360q38 0 76 8t74 22l133 133q-57 57-130 87T480-80Z" />
-                        </svg>
-                      </button>
-                    </div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="24px"
+                            viewBox="0 -960 960 960"
+                            width="24px"
+                            fill="black"
+                          >
+                            <path d="M538-538ZM424-424Zm56 264q51 0 98-15.5t88-44.5q-41-29-88-44.5T480-280q-51 0-98 15.5T294-220q41 29 88 44.5t98 15.5Zm106-328-57-57q5-8 8-17t3-18q0-25-17.5-42.5T480-640q-9 0-18 3t-17 8l-57-57q19-17 42.5-25.5T480-720q58 0 99 41t41 99q0 26-8.5 49.5T586-488Zm228 228-58-58q22-37 33-78t11-84q0-134-93-227t-227-93q-43 0-84 11t-78 33l-58-58q49-32 105-49t115-17q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 59-17 115t-49 105ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-59 16.5-115T145-701L27-820l57-57L876-85l-57 57-615-614q-22 37-33 78t-11 84q0 57 19 109t55 95q54-41 116.5-62.5T480-360q38 0 76 8t74 22l133 133q-57 57-130 87T480-80Z" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
