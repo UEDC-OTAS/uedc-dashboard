@@ -96,10 +96,10 @@ function DeliveryPage() {
         </div>
       </div>
 
-      <div className="flex">
+      <div className="grid grid-cols-5">
         <div
           className={`transition-all duration-300 ${
-            selectedOrder ? "w-2/3" : "w-full"
+            selectedOrder ? "col-span-3" : "col-span-5"
           }`}
         >
           <DeliveryTable
@@ -117,7 +117,7 @@ function DeliveryPage() {
 
         <div
           className={`transition-all duration-300 ${
-            selectedOrder ? "w-1/3" : "w-0"
+            selectedOrder ? "col-span-2" : "col-span-0"
           }`}
         >
           {selectedOrder && (

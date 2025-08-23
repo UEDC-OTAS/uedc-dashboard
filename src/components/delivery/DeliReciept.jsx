@@ -104,7 +104,7 @@ function DeliReciept({
   }
 
   return (
-    <div className="p-5 mt-5 ms-5 h-[calc(100vh-60px)] border border-gray-300 rounded-xl flex flex-col justify-between overflow-y-auto">
+    <div className="p-5 bg-white mt-5 ms-5 h-[calc(100vh-60px)] border border-gray-300 rounded-xl flex flex-col justify-between overflow-y-auto">
       <div>
         <div className="flex items-center justify-between mb-5 border-b border-gray-300 pb-5">
           <h1 className="header">Delivery Detail</h1>
