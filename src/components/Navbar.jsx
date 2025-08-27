@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
-import { MdOutlineSupportAgent } from "react-icons/md";
+import { MdOutlineSupportAgent, MdOutlineWatchLater } from "react-icons/md";
 import { ClockPlus } from "lucide-react";
 import {
   Package,
@@ -74,6 +74,12 @@ function Navbar() {
       messageCount,
     },
     { path: "/accs", icon: CgProfile, label: "Account", role: "admin" },
+    {
+      path: "/stock-log",
+      icon: MdOutlineWatchLater,
+      label: "Stock-Log",
+      role: "admin",
+    },
   ];
 
   const isActive = (path) => location.pathname === path;

@@ -12,6 +12,7 @@ import Accounts from "../components/accounts/Accounts";
 import NewOrders from "../components/orderManagement/NewOrders";
 import UnauthorizedPage from "../components/utli/401Page";
 import DeliveryDetail from "../components/delivery/DeliveryDetail";
+import StockLog from "../components/stockLog/StockLog";
 function Home() {
   return (
     <>
@@ -30,6 +31,7 @@ function Home() {
             <Route path="/support" element={<CustomerSupport />} />
             <Route path="/accs" element={<Accounts />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
+            <Route path="/stock-log" element={<StockLog />} />
           </Routes>
         </div>
       </div>

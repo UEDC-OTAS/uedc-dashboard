@@ -93,8 +93,6 @@ function GetAllOrder() {
     setActivePage(page);
   };
 
-  console.log("dateRange", dateRange);
-
   const searchFunction = async (name) => {
     const response = await searchOrder(name);
     const filterOrder = response.data.filter((item) => {
