@@ -41,8 +41,8 @@ const ProductTable = ({ products, sentQuantityModal, loading }) => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const visibleTabs = tabs.slice(0, 6);
-  const dropdownTabs = tabs.slice(6);
+  const visibleTabs = tabs.slice(0, 3);
+  const dropdownTabs = tabs.slice(3);
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -126,8 +126,8 @@ const ProductTable = ({ products, sentQuantityModal, loading }) => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto h-[calc(100vh-230px)]">
-        <table className="w-full table-auto">
+      <div className="w-[calc(100vw-130px)] lg:w-full overflow-x-auto bg-white rounded-lg shadow overflow-y-auto h-[calc(100vh-230px)]">
+        <table className=" table-auto">
           <thead
             className="bg-gray-50 border-b border-gray-200"
             style={{ position: "sticky", top: 0 }}

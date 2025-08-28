@@ -23,7 +23,7 @@ const StockTable = ({ logs }) => {
   return (
     <div className="w-full mx-auto pt-6">
       {/* Table */}
-      <div className=" bg-white rounded-lg shadow overflow-y-auto h-[calc(100vh-180px)]">
+      <div className="w-[calc(100vw-130px)] lg:w-full bg-white rounded-lg shadow overflow-y-auto h-[calc(100vh-180px)]">
         <table className="w-full table-auto">
           <thead
             className="bg-gray-50 border-b border-gray-200"

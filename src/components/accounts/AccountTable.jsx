@@ -260,6 +260,7 @@ const AccountTable = ({ users, refetch }) => {
         isOpen={isDeleteModalOpen}
         user={selectedUser}
         onClose={() => setIsDeleteModalOpen(false)}
+        refetch={refetch}
       />
     </div>
   );

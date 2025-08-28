@@ -70,10 +70,10 @@ function StockLog() {
   return (
     <div>
       <div className="px-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between ">
-          <h1 className="header">Order Management</h1>
+        <div className="flex lg:items-center justify-between ">
+          <h1 className="header">Stock Log</h1>
 
-          <div className="flex items-center justify-between gap-10 mt-5 lg:mt-0">
+          <div className="flex items-center justify-between gap-10 lg:mt-0">
             <div className="w-auto md:w-[400px]">
               {/* <SearchBar
                 onSearch={(name) => (!name ? getLogs() : null)}

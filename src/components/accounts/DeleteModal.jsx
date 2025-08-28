@@ -1,14 +1,25 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react"; // Importing the trash icon from lucide-react
+import deleteAccount from "../../api/accountApi/deleteAccount";
 
-export default function DeleteConfirmationModal({ isOpen, onClose, user }) {
+export default function DeleteConfirmationModal({
+  isOpen,
+  onClose,
+  user,
+  refetch,
+}) {
   const [inputValue, setInputValue] = useState("");
   const isConfirmButtonDisabled = inputValue !== user?.username;
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (inputValue === user?.username) {
-      alert(`Deleting account for ${user?.username}!`);
-      // In a real application, you would typically trigger an API call here
+      // console.log("user", user);
+      const res = await deleteAccount(user._id);
+      console.log("res", res);
+      if (res.code === 200) {
+        onClose();
+        refetch();
+      }
     } else {
       alert("Please type the correct staff name to confirm.");
     }

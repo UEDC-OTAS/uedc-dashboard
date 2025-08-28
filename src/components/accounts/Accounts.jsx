@@ -14,7 +14,8 @@ function Accounts() {
     const res = await getAllUsers();
     console.log(res);
     if (res.code === 200) {
-      setUsers(res.data);
+      const filteredUsers = res.data.filter((user) => user.isDeleted !== true);
+      setUsers(filteredUsers);
     } else if (res.code === 403) {
       navigate("/unauthorized");
     }

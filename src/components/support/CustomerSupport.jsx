@@ -264,7 +264,7 @@ const CustomerSupport = () => {
         </div>
 
         {/* Table */}
-        <div className="bg-white w-[calc(100vw-90px)] lg:w-full rounded-lg shadow overflow-y-auto h-[calc(100vh-230px)]">
+        <div className="w-[calc(100vw-130px)] lg:w-full bg-white w-[calc(100vw-90px)] lg:w-full rounded-lg shadow overflow-y-auto h-[calc(100vh-230px)]">
           <table className="w-full table-auto">
             <thead
               className="bg-gray-50 border-b border-gray-200"
