@@ -15,8 +15,7 @@ function DeliReciept({
   loading,
 }) {
   const role = JSON.parse(localStorage.getItem("uedc-user"))?.role;
-  const [deliveryService, setDeliveryService] = useState("Ninja-Van");
-  const [servicename, setServicename] = useState("");
+  const [deliveryService, setDeliveryService] = useState("");
   const [status, setStatus] = useState("");
   const [formData, setFormData] = useState({
     images: [],
@@ -27,10 +26,14 @@ function DeliReciept({
 
   const getOrderDetail = async () => {
     const response = await getAOrder(selectedOrder);
-    console.log(response.data.snapshotData);
-    if (response.data.code === 200) {
+    console.log(response);
+    if (response.code === 200) {
       setStatus(response.data.snapshotData.deliveryStatus);
-      setServicename(response.data.snapshotData.delivery.deliveryServiceName);
+      if (response.data.snapshotData.delivery.deliveryServiceName) {
+        setDeliveryService(
+          response.data.snapshotData.delivery.deliveryServiceName
+        );
+      }
     }
   };
 
@@ -57,7 +60,7 @@ function DeliReciept({
     }
   };
 
-  console.log(status);
+  console.log(deliveryService);
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -108,14 +111,14 @@ function DeliReciept({
       await handleDelivery();
       await chgStatus(selectedOrder, "completed");
       refreshOrders();
-      await axios.post(
-        "https://hook.us1.make.com/ckbcdf8v49x09xmvp5icapdxu7tgr9wy",
-        {
-          contact_id: response.data.contactId,
-          image_url: response.data.deliveryReceiptImage.cdnUrl,
-          tracking_link: response.data.parcelTrackingLink,
-        }
-      );
+      // await axios.post(
+      //   "https://hook.us1.make.com/ckbcdf8v49x09xmvp5icapdxu7tgr9wy",
+      //   {
+      //     contact_id: response.data.contactId,
+      //     image_url: response.data.deliveryReceiptImage.cdnUrl,
+      //     tracking_link: response.data.parcelTrackingLink,
+      //   }
+      // );
     }
     refreshOrders();
   };
@@ -166,6 +169,7 @@ function DeliReciept({
           </label>
           <select
             value={deliveryService}
+            disabled={status === "completed"}
             onChange={(e) => setDeliveryService(e.target.value)}
             className="w-full border border-gray-300 rounded-md p-2"
           >
