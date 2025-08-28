@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import uploadReceipt from "../../api/deliveryApi/uploadReceipt";
 import axios from "axios";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import chgOrderStatus from "../../api/orderApi/chgOrderStatus";
+import updateDeliService from "../../api/deliveryApi/updateDeliService";
 import Loading from "../utli/Loading";
+import getAOrder from "../../api/orderApi/getAOrder";
 
 function DeliReciept({
   selectedOrder,
@@ -12,14 +14,25 @@ function DeliReciept({
   onClose,
   loading,
 }) {
-  // console.log("receipt", receipt);
   const role = JSON.parse(localStorage.getItem("uedc-user"))?.role;
+  const [deliveryService, setDeliveryService] = useState("Ninja-Van");
+  const [servicename, setServicename] = useState("");
+  const [status, setStatus] = useState("");
   const [formData, setFormData] = useState({
     images: [],
     trackingLink: "",
   });
 
   const [dragActive, setDragActive] = useState(false);
+
+  const getOrderDetail = async () => {
+    const response = await getAOrder(selectedOrder);
+    console.log(response.data.snapshotData);
+    if (response.data.code === 200) {
+      setStatus(response.data.snapshotData.deliveryStatus);
+      setServicename(response.data.snapshotData.delivery.deliveryServiceName);
+    }
+  };
 
   const handleImageUpload = (files) => {
     const validFiles = Array.from(files).filter((file) => {
@@ -43,6 +56,8 @@ function DeliReciept({
       }));
     }
   };
+
+  console.log(status);
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -77,6 +92,12 @@ function DeliReciept({
     };
     await chgOrderStatus({ orderId, data });
   };
+  const handleDelivery = async () => {
+    const data = {
+      deliveryServiceName: deliveryService,
+    };
+    await updateDeliService({ id: selectedOrder, data });
+  };
 
   const handleConfirm = async () => {
     const data = new FormData();
@@ -84,7 +105,7 @@ function DeliReciept({
     data.append("parcelTrackingLink", formData.trackingLink);
     const response = await uploadReceipt({ data: data, id: selectedOrder });
     if (response.code === 201) {
-      console.log("response", response.data.deliveryReceiptImage.cdnUrl);
+      await handleDelivery();
       await chgStatus(selectedOrder, "completed");
       refreshOrders();
       await axios.post(
@@ -98,6 +119,10 @@ function DeliReciept({
     }
     refreshOrders();
   };
+
+  useEffect(() => {
+    getOrderDetail();
+  }, [selectedOrder]);
 
   if (loading) {
     return <Loading />;
@@ -133,6 +158,23 @@ function DeliReciept({
               <p>{receipt[0]?.parcelTrackingLink}</p>
             </div>
           )}
+        </div>
+
+        <div className="mt-5">
+          <label htmlFor="" className="block font-medium mb-4">
+            Delivery Service
+          </label>
+          <select
+            value={deliveryService}
+            onChange={(e) => setDeliveryService(e.target.value)}
+            className="w-full border border-gray-300 rounded-md p-2"
+          >
+            <option disabled value="">
+              Select Delivery Service
+            </option>
+            <option value="Ninja-Van">Ninja-Van</option>
+            <option value="Go-Fly">Go-Fly</option>
+          </select>
         </div>
 
         {receipt.length === 0 && (

@@ -29,6 +29,8 @@ function DeliveryPage() {
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  // console.log("selectedOrder", selectedOrder);
+
   const handleDateRangeChange = (ranges) => {
     setDateRange([
       {
@@ -79,10 +81,8 @@ function DeliveryPage() {
   };
 
   const getReceipt = async (id) => {
-    // console.log("work");
     setLoading(true);
     const response = await axios.get(`api/v1/delivery-receipt`);
-    // console.log("response", response);
     if (response.data.code === 200) {
       const filteredReceipt = response.data.data.filter(
         (receipt) => receipt.orderId === id
@@ -103,8 +103,6 @@ function DeliveryPage() {
     }
   };
 
-  // console.log("receipt", receipt);
-
   const passTab = (tab) => {
     if (tab === "Pending") {
       setActiveTab("confirmed");
@@ -122,6 +120,7 @@ function DeliveryPage() {
   useEffect(() => {
     getOrders();
   }, [activeTab, startDate, endDate]);
+
   return (
     <div className="px-4">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between ">
