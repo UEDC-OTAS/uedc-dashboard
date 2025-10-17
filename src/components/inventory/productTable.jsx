@@ -192,7 +192,7 @@ const ProductTable = ({ products, sentQuantityModal, loading }) => {
                           </span>
                         ) : (
                           <span className="bg-red-100 text-red-800 rounded-full px-2 py-1">
-                            Out of Stock
+                            Low Stock
                           </span>
                         )}
                       </span>
@@ -262,7 +262,7 @@ const ProductTable = ({ products, sentQuantityModal, loading }) => {
         <div className="flex items-center space-x-4">
           <span className="text-sm text-gray-700">
             {startIndex + 1} - {Math.min(endIndex, filteredProducts.length)} of{" "}
-            {filteredProducts.length} Orders
+            {filteredProducts.length} stocks
           </span>
 
           <div className="flex items-center space-x-2">
