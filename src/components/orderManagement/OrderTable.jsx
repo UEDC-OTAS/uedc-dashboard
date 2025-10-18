@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { generatePDF } from "./PdfGenerator";
-import { Printer, Download, Eye, Trash2 } from "lucide-react";
+import { Printer, Download, Eye, Trash2, FileSpreadsheet } from "lucide-react";
 import getAOrder from "../../api/orderApi/getAOrder";
 import { useNavigate } from "react-router-dom";
 import chgOrderStatus from "../../api/orderApi/chgOrderStatus";
 import deleteOrder from "../../api/orderApi/DeleteOrder";
 import DeleteConfirmationModal from "../accounts/DeleteModal";
+import { exportOrdersToExcel } from "../../utils/excelExport";
 
 const OrderTable = ({
   orders,
@@ -67,6 +68,23 @@ const OrderTable = ({
             {tab}
           </button>
         ))}
+
+        {/* Export Button */}
+        <div className="ml-auto">
+          <button
+            onClick={() =>
+              exportOrdersToExcel(
+                orders,
+                `orders_${activeTab.toLowerCase().replace(" ", "_")}`
+              )
+            }
+            className="flex items-center gap-2 px-4 py-2 border border-b-0 border-green-600 text-green-600 hover:text-white hover:bg-green-600 text-sm font-medium rounded-t-lg transition-colors"
+            title="Export to Excel"
+          >
+            <FileSpreadsheet size={16} />
+            Export Excel
+          </button>
+        </div>
       </div>
 
       {/* Table */}

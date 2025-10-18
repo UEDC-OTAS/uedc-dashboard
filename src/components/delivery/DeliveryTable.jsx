@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import chgOrderStatus from "../../api/orderApi/chgOrderStatus";
 import { RxCross2 } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
-import { Eye } from "lucide-react";
+import { Eye, FileSpreadsheet } from "lucide-react";
+import { exportDeliveryToExcel } from "../../utils/excelExport";
 
 const DeliveryTable = ({
   orders,
@@ -58,6 +59,23 @@ const DeliveryTable = ({
             {tab}
           </button>
         ))}
+
+        {/* Export Button */}
+        <div className="ml-auto">
+          <button
+            onClick={() =>
+              exportDeliveryToExcel(
+                orders,
+                `delivery_${activeTab.toLowerCase().replace("-", "_")}`
+              )
+            }
+            className="flex items-center gap-2 px-4 py-2 border border-b-0 border-green-600 text-green-600 hover:text-white hover:bg-green-600 text-sm font-medium rounded-t-lg transition-colors"
+            title="Export to Excel"
+          >
+            <FileSpreadsheet size={16} />
+            Export Excel
+          </button>
+        </div>
       </div>
 
       {/* Table */}
