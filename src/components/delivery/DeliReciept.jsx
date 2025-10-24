@@ -111,14 +111,14 @@ function DeliReciept({
       await handleDelivery();
       await chgStatus(selectedOrder, "completed");
       refreshOrders();
-      // await axios.post(
-      //   "https://hook.us1.make.com/ckbcdf8v49x09xmvp5icapdxu7tgr9wy",
-      //   {
-      //     contact_id: response.data.contactId,
-      //     image_url: response.data.deliveryReceiptImage.cdnUrl,
-      //     tracking_link: response.data.parcelTrackingLink,
-      //   }
-      // );
+      await axios.post(
+        "https://hook.us1.make.com/ckbcdf8v49x09xmvp5icapdxu7tgr9wy",
+        {
+          contact_id: response.data.contactId,
+          image_url: response.data.deliveryReceiptImage.cdnUrl,
+          tracking_link: response.data.parcelTrackingLink,
+        }
+      );
     }
     refreshOrders();
   };
@@ -162,7 +162,7 @@ function DeliReciept({
             </div>
           )}
         </div>
-
+        {/* 
         <div className="mt-5">
           <label htmlFor="" className="block font-medium mb-4">
             Delivery Service
@@ -179,7 +179,7 @@ function DeliReciept({
             <option value="Ninja-Van">Ninja-Van</option>
             <option value="Go-Fly">Go-Fly</option>
           </select>
-        </div>
+        </div> */}
 
         {receipt.length === 0 && (
           <div className="mt-5">
