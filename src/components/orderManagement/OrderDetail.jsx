@@ -96,7 +96,7 @@ export default function OrderDetails() {
             <h1 className="header">Order Details</h1>
           </div>
           <div className="flex gap-2 items-center">
-            {role !== "customer-support" && (
+            {/* {role !== "customer-support" && (
               <div className="flex gap-2 items-center">
                 {order.deliveryStatus !== "cancelled" && (
                   <button
@@ -118,7 +118,7 @@ export default function OrderDetails() {
                   </button>
                 )}
               </div>
-            )}
+            )} */}
             {role !== "customer-support" && (
               <div className="flex gap-2 items-center">
                 {order.deliveryStatus !== "cancelled" && (
