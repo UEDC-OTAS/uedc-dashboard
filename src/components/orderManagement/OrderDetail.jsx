@@ -249,7 +249,7 @@ export default function OrderDetails() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+                <div className="grid grid-cols-1 sm:grid-cols-1 gap-10">
                   {/* delivery type */}
                   <div>
                     <label htmlFor="deliveryType" className="label">
@@ -266,7 +266,7 @@ export default function OrderDetails() {
                   </div>
 
                   {/* delivery service */}
-                  {order.delivery.deliveryType === "delivery-service" ? (
+                  {/* {order.delivery.deliveryType === "delivery-service" ? (
                     <div>
                       <label htmlFor="Delivery Service" className="label">
                         Delivery Service
@@ -294,7 +294,7 @@ export default function OrderDetails() {
                         className="input-box"
                       />
                     </div>
-                  )}
+                  )} */}
                 </div>
 
                 <div className="grid grid-cols-1 gap-10">
