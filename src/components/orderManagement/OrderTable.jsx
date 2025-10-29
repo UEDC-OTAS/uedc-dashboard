@@ -34,6 +34,13 @@ const OrderTable = ({
   const endIndex = startIndex + itemsPerPage;
   const currentOrders = orders.slice(startIndex, endIndex);
 
+  const truncateWords = (text, maxWords) => {
+    if (!text) return "";
+    const words = String(text).trim().split(/\s+/);
+    if (words.length <= maxWords) return text;
+    return words.slice(0, maxWords).join(" ") + " ...";
+  };
+
   const handleView = (id) => {
     navigate(`/order/${id}`);
     // console.log("Edit product:", id);
@@ -149,19 +156,16 @@ const OrderTable = ({
                       {currentPage * itemsPerPage - itemsPerPage + index + 1}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {order?.snapshotData.customerName}
+                      <p className="text-ellipsis overflow-hidden w-[200px]">
+                        {" "}
+                        {order?.snapshotData.customerName}
+                      </p>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                       {order?.snapshotData.contactNumber}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <p
-                        className={`text-ellipsis overflow-hidden whitespace-nowrap ${
-                          activeOrder ? "max-w-[100px]" : "w-full"
-                        }`}
-                      >
-                        {order?.snapshotData.address}
-                      </p>
+                      <p className="">{order?.snapshotData.address}</p>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                       <span>{order?.snapshotData.paymentType}</span>

@@ -13,7 +13,7 @@ const DeliveryTable = ({
   removeOrder,
   refreshOrders,
 }) => {
-  // console.log("orders", orders);
+  console.log("orders", orders);
   const navigate = useNavigate();
   const role = JSON.parse(localStorage.getItem("uedc-user"))?.role;
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,6 +26,13 @@ const DeliveryTable = ({
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentOrders = orders.slice(startIndex, endIndex);
+
+  const truncateWords = (text, maxWords) => {
+    if (!text) return "";
+    const words = String(text).trim().split(/\s+/);
+    if (words.length <= maxWords) return text;
+    return words.slice(0, maxWords).join(" ") + " ...";
+  };
 
   const chgStatus = async (orderId, status) => {
     const data = {
@@ -139,10 +146,13 @@ const DeliveryTable = ({
                       {currentPage * itemsPerPage - itemsPerPage + index + 1}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {order?.snapshotData?.customerName}
+                      <p className="text-ellipsis overflow-hidden w-[200px]">
+                        {" "}
+                        {order?.snapshotData?.customerName}
+                      </p>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {order?.snapshotData?.address}
+                      <p className="">{order?.snapshotData?.address}</p>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                       <span>{order?.snapshotData?.contactNumber}</span>
@@ -153,7 +163,7 @@ const DeliveryTable = ({
                           className="flex space-x-2 items-center"
                           key={product._id}
                         >
-                          <span>{product.name}</span>
+                          <span>{truncateWords(product.name, 3)}</span>
                           <RxCross2 size={12} />
                           <span>{product.quantity}</span>
                         </div>
