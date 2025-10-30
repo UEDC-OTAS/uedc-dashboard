@@ -34,7 +34,7 @@ function OrderInfo({ selectedOrder, refreshOrders, handleClose }) {
     };
 
     axios.post(
-      "https://hook.us1.make.com/1dl8u4cfm8mzefq9zkevxsmshhqpl4yg",
+      "https://hook.us1.make.com/nw5p8znmordh46gb2fpw31aosj6r8uog",
       data
     );
   };

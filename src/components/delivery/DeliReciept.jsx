@@ -112,7 +112,7 @@ function DeliReciept({
       await chgStatus(selectedOrder, "completed");
       refreshOrders();
       await axios.post(
-        "https://hook.us1.make.com/ckbcdf8v49x09xmvp5icapdxu7tgr9wy",
+        "https://hook.us1.make.com/gsvlswsenp17xbua46xolvqyernk1ezi",
         {
           contact_id: response.data.contactId,
           image_url: response.data.deliveryReceiptImage.cdnUrl,
