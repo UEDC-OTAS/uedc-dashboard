@@ -95,8 +95,8 @@ const OrderTable = ({
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-lg shadow overflow-y-auto h-[calc(100vh-230px)]">
-        <table className="w-full table-auto">
+      <div className="bg-white rounded-lg overflow-x-hidden shadow overflow-y-auto h-[calc(100vh-230px)]">
+        <table className="w-full table-auto min-w-full">
           <thead
             className="bg-gray-50 border-b border-gray-200"
             style={{ position: "sticky", top: 0 }}
@@ -111,7 +111,7 @@ const OrderTable = ({
               <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
                 Phone
               </th>
-              <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
+              <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider max-w-xs">
                 Address
               </th>
               <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
@@ -164,7 +164,7 @@ const OrderTable = ({
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                       {order?.snapshotData.contactNumber}
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 text-sm text-gray-900 max-w-xs break-words">
                       <p className="">{order?.snapshotData.address}</p>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">

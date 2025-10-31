@@ -86,8 +86,8 @@ const DeliveryTable = ({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto h-[calc(100vh-230px)]">
-        <table className="w-full table-auto">
+      <div className="overflow-x-hidden bg-white rounded-lg shadow overflow-y-auto h-[calc(100vh-230px)]">
+        <table className="w-full table-auto min-w-full">
           <thead
             className="bg-gray-50 border-b border-gray-200"
             style={{ position: "sticky", top: 0 }}
@@ -99,7 +99,7 @@ const DeliveryTable = ({
               <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
                 Customer
               </th>
-              <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
+              <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider max-w-xs">
                 Address
               </th>
               <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
@@ -123,7 +123,7 @@ const DeliveryTable = ({
           {loading ? (
             <tbody>
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
                   loading...
                 </td>
               </tr>
@@ -133,7 +133,7 @@ const DeliveryTable = ({
               {currentOrders.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="px-4 py-8 text-center text-gray-500"
                   >
                     No Delivery orders found
@@ -151,7 +151,7 @@ const DeliveryTable = ({
                         {order?.snapshotData?.customerName}
                       </p>
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 text-sm text-gray-900 max-w-xs break-words">
                       <p className="">{order?.snapshotData?.address}</p>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
