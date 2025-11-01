@@ -108,17 +108,14 @@ function DeliReciept({
     data.append("parcelTrackingLink", formData.trackingLink);
     const response = await uploadReceipt({ data: data, id: selectedOrder });
     if (response.code === 201) {
-      await handleDelivery();
+      // await handleDelivery();
       await chgStatus(selectedOrder, "completed");
       refreshOrders();
-      await axios.post(
-        "https://hook.us1.make.com/ckbcdf8v49x09xmvp5icapdxu7tgr9wy",
-        {
-          contact_id: response.data.contactId,
-          image_url: response.data.deliveryReceiptImage.cdnUrl,
-          tracking_link: response.data.parcelTrackingLink,
-        }
-      );
+      await axios.post(import.meta.env.VITE_APP_DELI_WEBHOOK_URL, {
+        contact_id: response.data.contactId,
+        image_url: response.data.deliveryReceiptImage.cdnUrl,
+        tracking_link: response.data.parcelTrackingLink,
+      });
     }
     refreshOrders();
   };

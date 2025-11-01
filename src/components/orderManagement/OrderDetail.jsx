@@ -313,6 +313,23 @@ export default function OrderDetails() {
                     </div>
                   )}
                 </div>
+
+                <div className="grid grid-cols-1 gap-10">
+                  {/* delivery type */}
+                  <div>
+                    <label htmlFor="additionalNote" className="label">
+                      Additional Note
+                    </label>
+                    <input
+                      type="text"
+                      id="additionalNote"
+                      name="additionalNote"
+                      readOnly
+                      value={order.additionalNote || "-"}
+                      className="input-box"
+                    />
+                  </div>
+                </div>
               </div>
               {/* Image Upload */}
               {order.paymentType === "cash-down" && (

@@ -33,10 +33,7 @@ function OrderInfo({ selectedOrder, refreshOrders, handleClose }) {
       message_text: "ဝယ်ယူမှုအောင်မြင်ပါသည်",
     };
 
-    axios.post(
-      "https://hook.us1.make.com/1dl8u4cfm8mzefq9zkevxsmshhqpl4yg",
-      data
-    );
+    axios.post(import.meta.env.VITE_APP_ORDER_CONFIRM_WEBHOOK_URL, data);
   };
 
   const chgStatus = async (orderId, status) => {
