@@ -341,7 +341,7 @@ const CustomerSupport = () => {
                           <button
                             onClick={() => {
                               window.open(
-                                `https://app.manychat.com/fb106217229088030/chat/${ticket.ticketId}`
+                                `https://app.manychat.com/fb3700218/chat/${ticket.ticketId}`
                               );
                               chgStatusTicket(ticket._id, { hasSeen: true });
                             }}
