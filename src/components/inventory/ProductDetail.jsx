@@ -776,8 +776,8 @@ const ProductDetail = () => {
               type="button"
               onClick={() => {
                 setDeleteModal(true);
-                console.log(product._id);
-                setDeleteCode(product._id);
+                // console.log("product", product);
+                setDeleteCode(product.saleCode);
               }}
               className="flex gap-2 px-4 py-2 text-sm font-medium text-red-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors"
             >

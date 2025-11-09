@@ -156,7 +156,7 @@ const OrderTable = ({
                       {currentPage * itemsPerPage - itemsPerPage + index + 1}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <p className="text-ellipsis overflow-hidden w-[200px]">
+                      <p className="text-ellipsis overflow-hidden">
                         {" "}
                         {order?.snapshotData.customerName}
                       </p>
