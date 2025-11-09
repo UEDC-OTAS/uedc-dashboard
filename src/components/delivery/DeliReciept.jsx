@@ -23,6 +23,7 @@ function DeliReciept({
   });
 
   const [dragActive, setDragActive] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const getOrderDetail = async () => {
     const response = await getAOrder(selectedOrder);
@@ -57,10 +58,9 @@ function DeliReciept({
         ...prev,
         images: [...prev.images, ...newImages].slice(0, 5), // Max 5 images
       }));
+      setImageError(false);
     }
   };
-
-  console.log(deliveryService);
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -87,6 +87,7 @@ function DeliReciept({
       ...prev,
       images: prev.images.filter((img) => img.id !== imageId),
     }));
+    setImageError(false);
   };
 
   const chgStatus = async (orderId, status) => {
@@ -95,14 +96,15 @@ function DeliReciept({
     };
     await chgOrderStatus({ orderId, data });
   };
-  const handleDelivery = async () => {
-    const data = {
-      deliveryServiceName: deliveryService,
-    };
-    await updateDeliService({ id: selectedOrder, data });
-  };
 
   const handleConfirm = async () => {
+    if (formData.images.length === 0) {
+      setImageError(true);
+      return;
+    }
+
+    setImageError(false);
+
     const data = new FormData();
     data.append("deliveryReceiptImage", formData.images[0].file);
     data.append("parcelTrackingLink", formData.trackingLink);
@@ -187,7 +189,9 @@ function DeliReciept({
                 className={`
                   relative flex items-center justify-center border-2 h-[200px] border-dashed rounded-lg p-6 text-center transition-colors
                   ${
-                    dragActive
+                    imageError
+                      ? "border-red-500 bg-red-50"
+                      : dragActive
                       ? "border-orange-400 bg-orange-50"
                       : "border-gray-300 hover:border-gray-400"
                   }
@@ -227,17 +231,22 @@ function DeliReciept({
                 </div>
               </div>
             )}
+            {imageError && (
+              <p className="mt-2 text-sm text-red-500 text-center">
+                Receipt image is required.
+              </p>
+            )}
 
             {/* Image Previews */}
             {formData.images.length > 0 && (
-              <div className="mt-4 w-[350px] mx-auto">
+              <div className="mt-4   mx-auto">
                 {formData.images.map((image) => (
                   <div key={image.id} className="relative group">
                     <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
                       <img
                         src={image.preview || "/placeholder.svg"}
                         alt={image.name}
-                        className="w-full h-full object-cover"
+                        className="w-auto h-full object-cover"
                       />
                     </div>
 
@@ -273,7 +282,7 @@ function DeliReciept({
       </div>
 
       {receipt.length === 0 && role !== "customer-support" && (
-        <div className="flex items-center bg-white justify-end gap-5 py-5 sticky bottom-0">
+        <div className="flex items-center bg-white justify-end gap-5 py-5">
           <button
             className="flex-1 bg-primary text-white p-2 rounded-md"
             onClick={() => onClose()}
