@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { ChevronDown, Trash2 } from "lucide-react";
 import updateProduct from "../../api/inventoryApi/UpdateProduct";
 import deleteStock from "../../api/inventoryApi/DeleteStock";
+import deleteStockImage from "../../api/inventoryApi/DeleteStockImage";
+import uploadStockImage from "../../api/inventoryApi/UploadStockImage";
 import { useParams, useNavigate } from "react-router-dom";
 import getAProducts from "../../api/inventoryApi/getAproduct";
 import { MdArrowBack } from "react-icons/md";
@@ -17,6 +19,9 @@ const ProductDetail = () => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [deleteCode, setDeleteCode] = useState("");
+  const [deleteImageModal, setDeleteImageModal] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState(null);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [formData, setFormData] = useState({
     stockName: "",
     stockCode: "",
@@ -34,7 +39,7 @@ const ProductDetail = () => {
   // console.log(typeof formData.quantity);
   const getProductDetail = async (id) => {
     const response = await getAProducts(id);
-    // console.log("response", response);
+    console.log("response", response);
     setProduct(response);
   };
 
@@ -135,7 +140,7 @@ const ProductDetail = () => {
     }
   };
 
-  const handleImageUpload = (files) => {
+  const handleImageUpload = async (files) => {
     const validFiles = Array.from(files).filter((file) => {
       const isValidType = file.type.startsWith("image/");
       const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB limit
@@ -143,16 +148,32 @@ const ProductDetail = () => {
     });
 
     if (validFiles.length > 0) {
-      const newImages = validFiles.map((file) => ({
-        file,
-        id: Date.now() + Math.random(),
-        preview: URL.createObjectURL(file),
-        name: file.name,
-        size: file.size,
-      }));
+      // Check total images (existing + new) don't exceed 5
+      const totalImages = formData.images.length + validFiles.length;
+      if (totalImages > 5) {
+        alert(
+          `Maximum 5 images allowed. You currently have ${formData.images.length} existing images.`
+        );
+        return;
+      }
 
-      setLocalImages((prev) => [...prev, ...newImages].slice(0, 5)); // Max 5 images
-      // console.log("localImages", localImages);
+      setUploadingImages(true);
+      try {
+        // Upload images immediately
+        const fileObjects = validFiles.map((file) => file);
+        const response = await uploadStockImage(id, fileObjects);
+
+        if (response.code === 200) {
+          // Refresh product data to get updated images
+          await getProductDetail(id);
+          // Clear local images since they're now uploaded
+          setLocalImages([]);
+        }
+      } catch (error) {
+        console.error("Error uploading images:", error);
+      } finally {
+        setUploadingImages(false);
+      }
     }
   };
 
@@ -176,11 +197,44 @@ const ProductDetail = () => {
     }
   };
 
-  const removeImage = (imageId) => {
-    setFormData((prev) => ({
-      ...prev,
-      images: prev.images.filter((img) => img.id !== imageId),
-    }));
+  const removeImage = (image) => {
+    // If it's an existing image from the API (has _id), show confirmation modal
+    if (image._id && image.spaceKey) {
+      setImageToDelete(image);
+      setDeleteImageModal(true);
+    } else {
+      // For local images or images without spaceKey, just remove from state
+      setFormData((prev) => ({
+        ...prev,
+        images: prev.images.filter((img) => {
+          if (img._id) {
+            return img._id !== image._id;
+          }
+          return img.id !== image.id;
+        }),
+      }));
+    }
+  };
+
+  const confirmDeleteImage = async () => {
+    if (!imageToDelete) return;
+
+    try {
+      const response = await deleteStockImage(id, imageToDelete.spaceKey);
+      if (response.code === 200) {
+        // Remove from state after successful deletion
+        setFormData((prev) => ({
+          ...prev,
+          images: prev.images.filter((img) => img._id !== imageToDelete._id),
+        }));
+        // Refresh product data to get updated images
+        getProductDetail(id);
+        setDeleteImageModal(false);
+        setImageToDelete(null);
+      }
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
   };
 
   const validateForm = () => {
@@ -665,8 +719,8 @@ const ProductDetail = () => {
               Product Images
             </label>
 
-            {/* Upload Area */}
-            {localImages.length === 0 && formData.images.length === 0 && (
+            {/* Upload Area - Show if less than 5 images */}
+            {formData.images.length < 5 && (
               <div
                 className={`
                   relative border-2 border-dashed rounded-lg p-6 text-center transition-colors
@@ -675,6 +729,7 @@ const ProductDetail = () => {
                       ? "border-orange-400 bg-orange-50"
                       : "border-gray-300 hover:border-gray-400"
                   }
+                  ${uploadingImages ? "opacity-50 cursor-not-allowed" : ""}
                 `}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -684,30 +739,48 @@ const ProductDetail = () => {
                 <input
                   type="file"
                   accept="image/*"
+                  multiple
                   onChange={(e) => handleImageUpload(e.target.files)}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  disabled={uploadingImages}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                 />
 
                 <div className="space-y-2">
-                  <div className="mx-auto w-12 h-12 text-gray-400">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 48 48">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                      />
-                    </svg>
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    <span className="font-medium text-orange-600">
-                      Click to upload
-                    </span>{" "}
-                    or drag and drop
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    PNG, JPG, GIF up to 5MB (Max 5 images)
-                  </p>
+                  {uploadingImages ? (
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-2"></div>
+                      <p className="text-sm text-gray-600">
+                        Uploading images...
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mx-auto w-12 h-12 text-gray-400">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 48 48"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                          />
+                        </svg>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <span className="font-medium text-orange-600">
+                          Click to upload
+                        </span>{" "}
+                        or drag and drop
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        PNG, JPG, GIF up to 5MB (Max 5 images -{" "}
+                        {formData.images.length} uploaded)
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -726,39 +799,9 @@ const ProductDetail = () => {
                     </div>
 
                     {/* Remove Button */}
-                    {/* <button
-                      type="button"
-                      onClick={() => removeImage(image.id)}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
-                    >
-                      ×
-                    </button> */}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Local Image Previews */}
-            {localImages.length > 0 && (
-              <div className="mt-4 w-full flex flex-wrap gap-5">
-                {localImages.map((image) => (
-                  <div key={image.id} className="relative group w-48 h-48 ">
-                    <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                      <img
-                        src={image.preview}
-                        alt={image.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-
-                    {/* Remove Button */}
                     <button
                       type="button"
-                      onClick={() =>
-                        setLocalImages(
-                          localImages.filter((img) => img.id !== image.id)
-                        )
-                      }
+                      onClick={() => removeImage(image)}
                       className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
                     >
                       ×
@@ -850,6 +893,57 @@ const ProductDetail = () => {
                 >
                   <Trash2 className="w-5 h-5" />
                   <span>Delete Stock</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteImageModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div
+            className="absolute inset-0 bg-black opacity-50"
+            onClick={() => {
+              setDeleteImageModal(false);
+              setImageToDelete(null);
+            }}
+          ></div>
+          <div className="h-screen flex justify-center items-center z-100">
+            <div className="bg-white p-6 rounded-lg w-[500px] absolute z-100 opacity-100">
+              <div className="text-red-600 font-bold text-sm uppercase mb-2">
+                Danger Zone
+              </div>
+              <h2 className="text-2xl font-bold mb-4">Delete Image</h2>
+              <p className="text-gray-700 mb-4">
+                Are you sure you want to delete this image? This action cannot
+                be undone.
+              </p>
+              {imageToDelete && (
+                <div className="mb-6">
+                  <img
+                    src={imageToDelete.url || "/placeholder.svg"}
+                    alt="Image to delete"
+                    className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                  />
+                </div>
+              )}
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => {
+                    setDeleteImageModal(false);
+                    setImageToDelete(null);
+                  }}
+                  className="px-5 py-2.5 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteImage}
+                  className="px-5 py-2.5 rounded-lg flex items-center space-x-2 bg-red-600 text-white hover:bg-red-700 transition-colors duration-200"
+                >
+                  <Trash2 className="w-5 h-5" />
+                  <span>Delete Image</span>
                 </button>
               </div>
             </div>
