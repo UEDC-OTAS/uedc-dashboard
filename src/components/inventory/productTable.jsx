@@ -2,7 +2,7 @@ import { EyeIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const ProductTable = ({ products, sentQuantityModal, loading }) => {
+const ProductTable = ({ products, sentQuantityModal, loading, categories }) => {
   const role = JSON.parse(localStorage.getItem("uedc-user"))?.role;
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,21 +20,7 @@ const ProductTable = ({ products, sentQuantityModal, loading }) => {
     sentQuantityModal(product);
   };
 
-  const tabs = [
-    "All",
-    "Speakers",
-    "Bathroom-Fittings",
-    "Tiles",
-    "Aircoolers/Fans",
-    "Home-Electronics",
-    "Wall-Decoration",
-    "Kitchen-Electronics",
-    "Doors",
-    "Toilets",
-    "Powerbanks",
-    "Flooring",
-    "Other",
-  ];
+  const tabs = categories;
 
   // Function to toggle the dropdown visibility
   const toggleDropdown = () => {
@@ -43,6 +29,8 @@ const ProductTable = ({ products, sentQuantityModal, loading }) => {
 
   const visibleTabs = tabs.slice(0, 3);
   const dropdownTabs = tabs.slice(3);
+  console.log("visibleTabs", visibleTabs);
+  console.log("dropdownTabs", dropdownTabs);
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;

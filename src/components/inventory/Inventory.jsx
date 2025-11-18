@@ -17,14 +17,26 @@ function Inventory() {
   const role = JSON.parse(localStorage.getItem("uedc-user"))?.role;
   const [loading, setLoading] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
   const [quantityModalOpen, setIsQuantityModalOpen] = useState(false);
   const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]); // Store all products for suggestions
   const getProducts = async () => {
     setLoading(true);
     const response = await getAllProducts();
 
     if (response.code === 200) {
-      setProducts(response.data.reverse());
+      const reversedData = response.data.reverse();
+      setProducts(reversedData);
+      setAllProducts(reversedData); // Store all products for suggestions
+      console.log("response.data", response.data);
+      const categories = response.data.map((product) => product.category);
+      const subCategories = response.data.map((product) => product.subCategory);
+      setCategories(Array.from(new Set(categories)));
+      setSubCategories(Array.from(new Set(subCategories)));
+      console.log("categories", categories);
+      console.log("subCategories", subCategories);
       setLoading(false);
     } else if (response.code === 403) {
       setLoading(false);
@@ -39,7 +51,7 @@ function Inventory() {
 
   const updateStockQuantity = (data) => {
     // console.log("data", data);
-    setProducts((prevProducts) =>
+    const updateProduct = (prevProducts) =>
       prevProducts.map((product) => {
         const update = data.snapshotData.orderInfo.find(
           (u) => u.saleCode === product.saleCode
@@ -47,8 +59,10 @@ function Inventory() {
         return update
           ? { ...product, stock: update.currentStockQuantity }
           : product;
-      })
-    );
+      });
+
+    setProducts(updateProduct);
+    setAllProducts(updateProduct);
   };
 
   // const searchFunction = async (name) => {
@@ -81,6 +95,7 @@ function Inventory() {
     getProducts();
     socket.on("stockCreated", (data) => {
       setProducts((prevProducts) => [data, ...prevProducts]);
+      setAllProducts((prevProducts) => [data, ...prevProducts]);
     });
 
     socket.on("orderFinalized", (data) => {
@@ -94,6 +109,15 @@ function Inventory() {
 
     socket.on("stockUpdated", (data) => {
       setProducts((prevProducts) => {
+        const updatedProducts = prevProducts.map((product) => {
+          if (product._id === data._id) {
+            return data;
+          }
+          return product;
+        });
+        return updatedProducts;
+      });
+      setAllProducts((prevProducts) => {
         const updatedProducts = prevProducts.map((product) => {
           if (product._id === data._id) {
             return data;
@@ -117,11 +141,13 @@ function Inventory() {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between ">
         <h1 className="header">Stock Management</h1>
         <div className="flex items-center gap-10">
-          <div className="w-[400px]">
+          <div className="w-[400px] relative">
             <SearchBar
               onSearch={(name) => (!name ? getProducts() : null)}
               placeholder="Search Product Name"
               onClick={searchFunction}
+              products={allProducts}
+              showSuggestions={true}
             />
           </div>
           {role !== "customer-support" && (
@@ -146,6 +172,7 @@ function Inventory() {
       <ProductTable
         products={products}
         loading={loading}
+        categories={categories}
         // sentproductDetail={getProductDetail}
         sentQuantityModal={getQuantityModal}
       />

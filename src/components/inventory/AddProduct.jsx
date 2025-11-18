@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import addProduct from "../../api/inventoryApi/AddProduct";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import getAllProducts from "../../api/inventoryApi/GetAllProducts";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -21,62 +22,8 @@ const AddProduct = () => {
   // const defaultImage = logo;
   const [errors, setErrors] = useState({});
   const [dragActive, setDragActive] = useState(false);
-
-  // Consolidated category and sub-category data structure
-  const allCategories = {
-    Speakers: ["Speaker", "JBL Speaker"],
-    "Bathroom Fittings": [
-      "Shower Set ups",
-      "Steel Basin",
-      "Eco Wood",
-      "sm Basin",
-      "Basin Set",
-    ],
-    Tiles: ["8x12", "3x1", "2x2", "Stair Tiles", "2x1"],
-    "Aircoolers/Fans": [
-      "Non-ACDC Aircooler",
-      "Aircon",
-      "Cooling Fan",
-      "ACDC Stand Fan",
-      "Aircooler",
-      "Fan and Aircooler",
-      "ACDC",
-    ],
-    "Home Electronics": [
-      "Washing Machine",
-      "Hair Dryer",
-      "Vacuum Cleaner",
-      "Water Heater",
-      "Refrigerato",
-    ],
-    "Wall Decoration": ["Eco Wood", "Marble Sheet", "PS Panel", "Wall Paper"],
-    "Kitchen Electronics": [
-      "Microwave",
-      "Diabetic Cooker",
-      "Gas Stoves",
-      "Rice Cooker",
-      "Cooking Stove",
-      "Juicer/Blender",
-      "Oven",
-    ],
-    Doors: [
-      "Fireproof",
-      "Steel Door",
-      "Aluminium Door",
-      "ABS Door",
-      "PVC Door",
-      "UPVC Door",
-    ],
-    Toilets: ["2 piece", "1 piece"],
-    Powerbanks: [
-      "Laptop Powerbank",
-      "10000 to 30000mah",
-      "40000 to 60000mah",
-      "80000mah and above",
-    ],
-    Flooring: ["SPC", "Parquet", "Vinyl"],
-    Other: ["Other"],
-  };
+  const [allCategories, setAllCategories] = useState({});
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -249,6 +196,43 @@ const AddProduct = () => {
     navigate("/");
   };
 
+  // Fetch categories and subcategories from API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoadingCategories(true);
+        const response = await getAllProducts();
+
+        if (response.code === 200 && response.data) {
+          // Build categories object from products
+          const categoriesMap = {};
+
+          response.data.forEach((product) => {
+            if (product.category && product.subCategory) {
+              if (!categoriesMap[product.category]) {
+                categoriesMap[product.category] = [];
+              }
+              // Add subcategory if it doesn't already exist
+              if (
+                !categoriesMap[product.category].includes(product.subCategory)
+              ) {
+                categoriesMap[product.category].push(product.subCategory);
+              }
+            }
+          });
+
+          setAllCategories(categoriesMap);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   useEffect(() => {
     // Cleanup function to revoke object URLs when component unmounts
     return () => {
@@ -358,6 +342,7 @@ const AddProduct = () => {
                     name="stockCategory"
                     value={formData.stockCategory}
                     onChange={handleInputChange}
+                    disabled={loadingCategories}
                     className={`
                 w-full px-3 py-2 border rounded-lg text-sm appearance-none
                 focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
@@ -368,14 +353,20 @@ const AddProduct = () => {
                     : "border-gray-300"
                 }
                 ${!formData.stockCategory ? "text-gray-500" : "text-gray-900"}
+                ${loadingCategories ? "bg-gray-100 cursor-not-allowed" : ""}
               `}
                   >
-                    <option value="">Select Stock Category</option>
-                    {Object.keys(allCategories).map((category) => (
-                      <option key={category} value={category}>
-                        {category}
-                      </option>
-                    ))}
+                    <option value="">
+                      {loadingCategories
+                        ? "Loading categories..."
+                        : "Select Stock Category"}
+                    </option>
+                    {!loadingCategories &&
+                      Object.keys(allCategories).map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 </div>
