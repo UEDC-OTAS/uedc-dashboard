@@ -6,6 +6,7 @@ import { RiCustomerService2Fill } from "react-icons/ri";
 import io from "socket.io-client";
 import { useContext } from "react";
 import { NumberContext } from "../../context/NumberContext";
+import SearchBar from "../utli/SearchBar";
 
 const socket = io.connect(import.meta.env.VITE_APP_API, {
   transports: ["websocket"],
@@ -14,9 +15,11 @@ const socket = io.connect(import.meta.env.VITE_APP_API, {
 
 const CustomerSupport = () => {
   const [tickets, setTickets] = useState([]);
+  const [allTickets, setAllTickets] = useState([]); // Store all tickets for search
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [filter, setFilter] = useState("unseen");
+  const [searchTerm, setSearchTerm] = useState("");
   const [notificationPermission, setNotificationPermission] = useState(
     typeof window !== "undefined" && "Notification" in window
       ? Notification.permission
@@ -96,7 +99,9 @@ const CustomerSupport = () => {
     const response = await getAllTickets();
     // console.log("response", response);
     if (response.code === 200) {
-      setTickets(response.data.reverse());
+      const reversedData = response.data.reverse();
+      setTickets(reversedData);
+      setAllTickets(reversedData); // Store all tickets for search
       setMessageCount(
         response.data.filter((t) => !t.hasSeen && !t.hasSolved).length
       );
@@ -117,6 +122,7 @@ const CustomerSupport = () => {
     socket.on("newCustomerSupportTicket", (data) => {
       // console.log("newCustomerSupportTicket", data);
       setTickets((prevTickets) => [data, ...prevTickets]);
+      setAllTickets((prevTickets) => [data, ...prevTickets]);
       // Play notification sound
       if (typeof window !== "undefined") {
         // playNotificationSound();
@@ -132,9 +138,10 @@ const CustomerSupport = () => {
     socket.on("customerSupportTicketUpdated", (data) => {
       setMessageCount((prevCount) => prevCount - 1);
       // console.log("customerSupportTicketUpdated", data);
-      setTickets((prevTickets) =>
-        prevTickets.map((ticket) => (ticket._id === data._id ? data : ticket))
-      );
+      const updateTickets = (prevTickets) =>
+        prevTickets.map((ticket) => (ticket._id === data._id ? data : ticket));
+      setTickets(updateTickets);
+      setAllTickets(updateTickets);
       // Play notification sound
       if (typeof window !== "undefined") {
         playNotificationSound();
@@ -156,10 +163,30 @@ const CustomerSupport = () => {
   };
 
   const filteredTickets = tickets.filter((ticket) => {
-    if (filter === "unseen") return !ticket.hasSeen && !ticket.hasSolved;
-    if (filter === "solved") return ticket.hasSolved;
-    if (filter === "unsolved") return !ticket.hasSolved && ticket.hasSeen;
-    return true;
+    // Apply filter first
+    let matchesFilter = false;
+    if (filter === "unseen")
+      matchesFilter = !ticket.hasSeen && !ticket.hasSolved;
+    else if (filter === "solved") matchesFilter = ticket.hasSolved;
+    else if (filter === "unsolved")
+      matchesFilter = !ticket.hasSolved && ticket.hasSeen;
+    else matchesFilter = true;
+
+    if (!matchesFilter) return false;
+
+    // Apply search filter if search term exists
+    if (searchTerm.trim() === "") return true;
+
+    const search = searchTerm.toLowerCase().trim();
+    const customerName = (ticket?.customerName || "").toLowerCase();
+    const facebookName = (ticket?.facebookName || "").toLowerCase();
+    const additionalNote = (ticket?.additionalNote || "").toLowerCase();
+
+    return (
+      customerName.includes(search) ||
+      facebookName.includes(search) ||
+      additionalNote.includes(search)
+    );
   });
 
   // Pagination calculations
@@ -188,9 +215,22 @@ const CustomerSupport = () => {
       {/* Header */}
 
       <div className="w-full px-4">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <h1 className="header">Customer Support Request</h1>
           <div className="flex items-center space-x-4">
+            <div className="w-auto md:w-[400px]">
+              <SearchBar
+                onSearch={(name) => {
+                  setSearchTerm(name);
+                  setCurrentPage(1); // Reset to first page when searching
+                }}
+                placeholder="Search Customer Name or Issue"
+                onClear={() => {
+                  setSearchTerm("");
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
             <span className="text-sm text-gray-500">
               {filteredTickets.length} tickets
             </span>
