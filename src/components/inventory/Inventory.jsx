@@ -4,7 +4,6 @@ import ProductTable from "./productTable";
 import getAllProducts from "../../api/inventoryApi/GetAllProducts";
 import QuantityModal from "./QuantityModal";
 import { useNavigate } from "react-router-dom";
-import searchProduct from "../../api/inventoryApi/SearchProduct";
 import io from "socket.io-client";
 
 const socket = io.connect(import.meta.env.VITE_APP_API, {
@@ -65,30 +64,23 @@ function Inventory() {
     setAllProducts(updateProduct);
   };
 
-  // const searchFunction = async (name) => {
-  //   if (!name) {
-  //     getProducts();
-  //     return;
-  //   }
-  //   console.log("name", name);
-  //   const filteredProducts = products.filter((product) => {
-  //     return (
-  //       product.name.toLowerCase().includes(name.toLowerCase()) ||
-  //       product.saleCode.toLowerCase().includes(name.toLowerCase())
-  //     );
-  //   });
-  //   console.log("filteredProducts", filteredProducts);
-  //   setProducts(filteredProducts);
-  // };
-
-  const searchFunction = async (name) => {
-    if (!name) {
-      getProducts();
+  const searchFunction = (name) => {
+    if (!name || name.trim() === "") {
+      // If search is empty, show all products
+      setProducts(allProducts);
       return;
     }
-    const res = await searchProduct(name);
-    // console.log("res", res);
-    setProducts(res.data || []);
+
+    // Filter products locally by name or sale code
+    const filteredProducts = allProducts.filter((product) => {
+      const productName = product.name?.toLowerCase() || "";
+      const saleCode = product.saleCode?.toLowerCase() || "";
+      const searchTerm = name.toLowerCase().trim();
+
+      return productName.includes(searchTerm) || saleCode.includes(searchTerm);
+    });
+
+    setProducts(filteredProducts);
   };
 
   useEffect(() => {
@@ -143,9 +135,9 @@ function Inventory() {
         <div className="flex items-center gap-10">
           <div className="w-[400px] relative">
             <SearchBar
-              onSearch={(name) => (!name ? getProducts() : null)}
               placeholder="Search Product Name"
               onClick={searchFunction}
+              onClear={() => setProducts(allProducts)}
               products={allProducts}
               showSuggestions={true}
             />

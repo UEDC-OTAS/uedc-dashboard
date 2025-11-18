@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Search } from "lucide-react";
 
-const SearchBar = ({ placeholder, onSearch, onClick, products, showSuggestions = false }) => {
+const SearchBar = ({ placeholder, onSearch, onClick, onClear, products, showSuggestions = false }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -50,11 +50,12 @@ const SearchBar = ({ placeholder, onSearch, onClick, products, showSuggestions =
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-
-    // Call the onSearch callback if provided
-    if (onSearch) {
-      onSearch(value);
+    
+    // If search is cleared, reset to show all products
+    if (value.trim() === "" && onClear) {
+      onClear();
     }
+    // Don't call onSearch here - only update when user clicks suggestion or submits
   };
 
   const handleClick = () => {
