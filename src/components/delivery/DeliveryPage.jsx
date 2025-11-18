@@ -16,11 +16,14 @@ import searchOrder from "../../api/orderApi/SearchOrder";
 function DeliveryPage() {
   const today = new Date();
   const [orders, setOrders] = useState([]);
+  const [allOrders, setAllOrders] = useState([]); // Store all orders for search
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [receipt, setReceipt] = useState(null);
   const [activeTab, setActiveTab] = useState("confirmed");
   const [activePage, setActivePage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
   const [startDate, setStartDate] = useState(
     sessionStorage.getItem("startDate") || startOfDay(today)
   );
@@ -62,22 +65,37 @@ function DeliveryPage() {
     const response = await getAllOrders(activeTab, start, end);
     if (response.code === 200) {
       setOrders(response.data);
+      setAllOrders(response.data); // Store all orders for search
       setLoading(false);
     }
   };
 
   const searchFunction = async (name) => {
-    const response = await searchOrder(name);
-    const filterOrder = response.data.filter((item) => {
-      return item.deliveryStatus === activeTab;
-    });
-    const orderArray = filterOrder.map((item) => {
-      return {
-        _id: item._id,
-        snapshotData: { ...item },
-      };
-    });
-    setOrders(orderArray);
+    if (!name || name.trim() === "") {
+      // If search is empty, show all orders
+      setOrders(allOrders);
+      return;
+    }
+
+    setSearchLoading(true);
+    try {
+      const response = await searchOrder(name);
+      const filterOrder = response.data.filter((item) => {
+        return item.deliveryStatus === activeTab;
+      });
+      const orderArray = filterOrder.map((item) => {
+        return {
+          _id: item._id,
+          snapshotData: { ...item },
+        };
+      });
+      setOrders(orderArray);
+    } catch (error) {
+      console.error("Search error:", error);
+      setOrders([]);
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   const getReceipt = async (id) => {
@@ -117,6 +135,38 @@ function DeliveryPage() {
     setActivePage(page);
   };
 
+  // Debounced search effect - triggers API call as user types
+  useEffect(() => {
+    // Skip if searchTerm is empty (will be handled by onClear)
+    if (searchTerm.trim() === "") {
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      setSearchLoading(true);
+      try {
+        const response = await searchOrder(searchTerm);
+        const filterOrder = response.data.filter((item) => {
+          return item.deliveryStatus === activeTab;
+        });
+        const orderArray = filterOrder.map((item) => {
+          return {
+            _id: item._id,
+            snapshotData: { ...item },
+          };
+        });
+        setOrders(orderArray);
+      } catch (error) {
+        console.error("Search error:", error);
+        setOrders([]);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 300); // 300ms debounce delay
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, activeTab]);
+
   useEffect(() => {
     getOrders();
   }, [activeTab, startDate, endDate]);
@@ -128,9 +178,15 @@ function DeliveryPage() {
         <div className="flex items-center justify-between gap-10 mt-5 lg:mt-0">
           <div className="w-auto md:w-[400px]">
             <SearchBar
-              onSearch={(name) => (!name ? getOrders() : null)}
+              onSearch={(name) => {
+                setSearchTerm(name);
+              }}
               placeholder="Search Customer Name"
               onClick={searchFunction}
+              onClear={() => {
+                setSearchTerm("");
+                setOrders(allOrders);
+              }}
             />
           </div>
           <button

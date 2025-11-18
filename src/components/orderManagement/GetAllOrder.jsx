@@ -9,14 +9,16 @@ import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import io from "socket.io-client";
 import SearchBar from "../utli/SearchBar";
-import searchOrder from "../../api/orderApi/SearchOrder";
 import { startOfDay, endOfDay } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import searchOrder from "../../api/orderApi/SearchOrder";
 const socket = io.connect(import.meta.env.VITE_APP_API, {
   transports: ["websocket"],
   secure: true,
 });
 
 function GetAllOrder() {
+  const navigate = useNavigate();
   const today = new Date();
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -44,9 +46,12 @@ function GetAllOrder() {
     },
   ]);
   const [orders, setOrders] = useState([]);
+  const [allOrders, setAllOrders] = useState([]); // Store all orders for search
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("pending");
   const [activePage, setActivePage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const ApplyDate = () => {
     setStartDate(startOfDay(dateRange[0].startDate));
@@ -62,13 +67,14 @@ function GetAllOrder() {
     const end = format(endDate, "yyyy-MM-dd");
 
     const response = await getAllOrders(activeTab, start, end);
-    setOrders(response.data);
-    console.log("response", response);
     if (response.code === 200) {
+      setOrders(response.data);
+      setAllOrders(response.data); // Store all orders for search
       setLoading(false);
     } else if (response.code === 403) {
       navigate("/unauthorized");
     }
+    console.log("response", response);
   };
 
   const passOrder = (orderId) => {
@@ -94,18 +100,64 @@ function GetAllOrder() {
   };
 
   const searchFunction = async (name) => {
-    const response = await searchOrder(name);
-    const filterOrder = response.data.filter((item) => {
-      return item.deliveryStatus === activeTab;
-    });
-    const orderArray = filterOrder.map((item) => {
-      return {
-        _id: item._id,
-        snapshotData: { ...item },
-      };
-    });
-    setOrders(orderArray);
+    if (!name || name.trim() === "") {
+      // If search is empty, show all orders
+      setOrders(allOrders);
+      return;
+    }
+
+    setSearchLoading(true);
+    try {
+      const response = await searchOrder(name);
+      const filterOrder = response.data.filter((item) => {
+        return item.deliveryStatus === activeTab;
+      });
+      const orderArray = filterOrder.map((item) => {
+        return {
+          _id: item._id,
+          snapshotData: { ...item },
+        };
+      });
+      setOrders(orderArray);
+    } catch (error) {
+      console.error("Search error:", error);
+      setOrders([]);
+    } finally {
+      setSearchLoading(false);
+    }
   };
+
+  // Debounced search effect - triggers API call as user types
+  useEffect(() => {
+    // Skip if searchTerm is empty (will be handled by onClear)
+    if (searchTerm.trim() === "") {
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      setSearchLoading(true);
+      try {
+        const response = await searchOrder(searchTerm);
+        const filterOrder = response.data.filter((item) => {
+          return item.deliveryStatus === activeTab;
+        });
+        const orderArray = filterOrder.map((item) => {
+          return {
+            _id: item._id,
+            snapshotData: { ...item },
+          };
+        });
+        setOrders(orderArray);
+      } catch (error) {
+        console.error("Search error:", error);
+        setOrders([]);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 300); // 300ms debounce delay
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, activeTab]);
 
   useEffect(() => {
     getOrders();
@@ -152,9 +204,15 @@ function GetAllOrder() {
         <div className="flex items-center justify-between gap-10 mt-5 lg:mt-0">
           <div className="w-auto md:w-[400px]">
             <SearchBar
-              onSearch={(name) => (!name ? getOrders() : null)}
+              onSearch={(name) => {
+                setSearchTerm(name);
+              }}
               placeholder="Search Customer Name"
               onClick={searchFunction}
+              onClear={() => {
+                setSearchTerm("");
+                setOrders(allOrders);
+              }}
             />
           </div>
           <button

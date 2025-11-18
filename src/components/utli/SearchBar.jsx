@@ -51,11 +51,15 @@ const SearchBar = ({ placeholder, onSearch, onClick, onClear, products, showSugg
     const value = e.target.value;
     setSearchTerm(value);
     
-    // If search is cleared, reset to show all products
+    // If search is cleared, reset to show all items
     if (value.trim() === "" && onClear) {
       onClear();
     }
-    // Don't call onSearch here - only update when user clicks suggestion or submits
+    
+    // Call onSearch callback if provided (for real-time search)
+    if (onSearch) {
+      onSearch(value);
+    }
   };
 
   const handleClick = () => {
