@@ -29,8 +29,8 @@ const ProductTable = ({ products, sentQuantityModal, loading, categories }) => {
 
   const visibleTabs = tabs.slice(0, 3);
   const dropdownTabs = tabs.slice(3);
-  console.log("visibleTabs", visibleTabs);
-  console.log("dropdownTabs", dropdownTabs);
+  // console.log("visibleTabs", visibleTabs);
+  // console.log("dropdownTabs", dropdownTabs);
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -69,7 +69,6 @@ const ProductTable = ({ products, sentQuantityModal, loading, categories }) => {
                 }`}
           >
             Other Categories
-            {/* Dropdown icon */}
             <svg
               className={`ml-2 h-4 w-4 transform transition-transform ${
                 isDropdownOpen ? "rotate-180" : "rotate-0"
@@ -86,7 +85,6 @@ const ProductTable = ({ products, sentQuantityModal, loading, categories }) => {
             </svg>
           </button>
 
-          {/* Dropdown menu */}
           {isDropdownOpen && (
             <div
               className="absolute w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none"

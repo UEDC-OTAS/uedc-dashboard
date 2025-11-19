@@ -24,6 +24,10 @@ const AddProduct = () => {
   const [dragActive, setDragActive] = useState(false);
   const [allCategories, setAllCategories] = useState({});
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [showSubCategoryDropdown, setShowSubCategoryDropdown] = useState(false);
+  const [categoryInput, setCategoryInput] = useState("");
+  const [subCategoryInput, setSubCategoryInput] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,6 +37,7 @@ const AddProduct = () => {
       // If the stockCategory changes, reset subCategory
       if (name === "stockCategory") {
         newState.subCategory = ""; // Reset subCategory when main category changes
+        setSubCategoryInput("");
       }
       return newState;
     });
@@ -42,6 +47,67 @@ const AddProduct = () => {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
+      }));
+    }
+  };
+
+  // Handle category input change
+  const handleCategoryInputChange = (e) => {
+    const value = e.target.value;
+    setCategoryInput(value);
+    setFormData((prev) => ({ ...prev, stockCategory: value }));
+    setShowCategoryDropdown(true);
+
+    if (errors.stockCategory) {
+      setErrors((prev) => ({
+        ...prev,
+        stockCategory: "",
+      }));
+    }
+  };
+
+  // Handle subCategory input change
+  const handleSubCategoryInputChange = (e) => {
+    const value = e.target.value;
+    setSubCategoryInput(value);
+    setFormData((prev) => ({ ...prev, subCategory: value }));
+    setShowSubCategoryDropdown(true);
+
+    if (errors.subCategory) {
+      setErrors((prev) => ({
+        ...prev,
+        subCategory: "",
+      }));
+    }
+  };
+
+  // Handle category selection from dropdown
+  const handleCategorySelect = (category) => {
+    setCategoryInput(category);
+    setFormData((prev) => ({ ...prev, stockCategory: category }));
+    setShowCategoryDropdown(false);
+    // Reset subCategory when category changes
+    setSubCategoryInput("");
+    setFormData((prev) => ({ ...prev, subCategory: "" }));
+
+    if (errors.stockCategory) {
+      setErrors((prev) => ({
+        ...prev,
+        stockCategory: "",
+      }));
+    }
+  };
+
+  // Handle subCategory selection from dropdown
+  const handleSubCategorySelect = (subCategory) => {
+    setSubCategoryInput(subCategory);
+    setFormData((prev) => ({ ...prev, subCategory: subCategory }));
+    setShowSubCategoryDropdown(false);
+
+    if (errors.subCategory) {
+      setErrors((prev) => ({
+        ...prev,
+        subCategory: "",
       }));
     }
   };
@@ -192,6 +258,10 @@ const AddProduct = () => {
       price: "",
       images: [],
     });
+    setCategoryInput("");
+    setSubCategoryInput("");
+    setShowCategoryDropdown(false);
+    setShowSubCategoryDropdown(false);
     setErrors({});
     navigate("/");
   };
@@ -248,6 +318,47 @@ const AddProduct = () => {
   const filteredSubCategories = formData.stockCategory
     ? allCategories[formData.stockCategory] || []
     : [];
+
+  // Get filtered categories based on input
+  const filteredCategories = categoryInput
+    ? Object.keys(allCategories).filter((category) =>
+        category.toLowerCase().includes(categoryInput.toLowerCase())
+      )
+    : Object.keys(allCategories);
+
+  // Get filtered sub-categories based on input
+  const filteredSubCategoriesList = subCategoryInput
+    ? filteredSubCategories.filter((subCat) =>
+        subCat.toLowerCase().includes(subCategoryInput.toLowerCase())
+      )
+    : filteredSubCategories;
+
+  // Sync input states with formData
+  useEffect(() => {
+    setCategoryInput(formData.stockCategory || "");
+  }, [formData.stockCategory]);
+
+  useEffect(() => {
+    setSubCategoryInput(formData.subCategory || "");
+  }, [formData.subCategory]);
+
+  // Handle click outside to close dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        !event.target.closest(".category-combobox") &&
+        !event.target.closest(".subcategory-combobox")
+      ) {
+        setShowCategoryDropdown(false);
+        setShowSubCategoryDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="w-full h-[calc(100vh-30px)] px-4 overflow-y-auto">
@@ -329,7 +440,7 @@ const AddProduct = () => {
             {/* Stock Category and Sub Category */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Stock Category */}
-              <div>
+              <div className="category-combobox">
                 <label
                   htmlFor="stockCategory"
                   className="block text-sm font-medium text-gray-700 mb-2"
@@ -337,14 +448,21 @@ const AddProduct = () => {
                   Stock Category
                 </label>
                 <div className="relative">
-                  <select
+                  <input
+                    type="text"
                     id="stockCategory"
                     name="stockCategory"
-                    value={formData.stockCategory}
-                    onChange={handleInputChange}
+                    value={categoryInput}
+                    onChange={handleCategoryInputChange}
+                    onFocus={() => setShowCategoryDropdown(true)}
                     disabled={loadingCategories}
+                    placeholder={
+                      loadingCategories
+                        ? "Loading categories..."
+                        : "Type or select category"
+                    }
                     className={`
-                w-full px-3 py-2 border rounded-lg text-sm appearance-none
+                w-full px-3 py-2 pr-10 border rounded-lg text-sm
                 focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
                 transition-colors
                 ${
@@ -352,23 +470,26 @@ const AddProduct = () => {
                     ? "border-red-300 bg-red-50"
                     : "border-gray-300"
                 }
-                ${!formData.stockCategory ? "text-gray-500" : "text-gray-900"}
+                ${!categoryInput ? "text-gray-500" : "text-gray-900"}
                 ${loadingCategories ? "bg-gray-100 cursor-not-allowed" : ""}
               `}
-                  >
-                    <option value="">
-                      {loadingCategories
-                        ? "Loading categories..."
-                        : "Select Stock Category"}
-                    </option>
-                    {!loadingCategories &&
-                      Object.keys(allCategories).map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                  </select>
+                  />
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+
+                  {/* Dropdown */}
+                  {showCategoryDropdown && !loadingCategories && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+                      {filteredCategories.map((category) => (
+                        <div
+                          key={category}
+                          onClick={() => handleCategorySelect(category)}
+                          className="px-3 py-2 text-sm text-gray-900 cursor-pointer hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                        >
+                          {category}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 {errors.stockCategory && (
                   <p className="mt-1 text-sm text-red-600">
@@ -378,24 +499,29 @@ const AddProduct = () => {
               </div>
 
               {/* Sub Category */}
-              <div>
+              <div className="subcategory-combobox">
                 <label
                   htmlFor="subCategory"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Sub Category
-                </label>{" "}
-                {/* Changed label from "Stock Category" to "Sub Category" */}
+                </label>
                 <div className="relative">
-                  <select
+                  <input
+                    type="text"
                     id="subCategory"
                     name="subCategory"
-                    value={formData.subCategory}
-                    onChange={handleInputChange}
-                    // Disable if no main category is selected
+                    value={subCategoryInput}
+                    onChange={handleSubCategoryInputChange}
+                    onFocus={() => setShowSubCategoryDropdown(true)}
                     disabled={!formData.stockCategory}
+                    placeholder={
+                      !formData.stockCategory
+                        ? "Select category first"
+                        : "Type or select sub category"
+                    }
                     className={`
-                w-full px-3 py-2 border rounded-lg text-sm appearance-none
+                w-full px-3 py-2 pr-10 border rounded-lg text-sm
                 focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
                 transition-colors
                 ${
@@ -403,23 +529,30 @@ const AddProduct = () => {
                     ? "border-red-300 bg-red-50"
                     : "border-gray-300"
                 }
-                ${!formData.subCategory ? "text-gray-500" : "text-gray-900"}
+                ${!subCategoryInput ? "text-gray-500" : "text-gray-900"}
                 ${
                   !formData.stockCategory
                     ? "bg-gray-100 cursor-not-allowed"
                     : ""
                 }
               `}
-                  >
-                    <option value="">Select Sub Category</option>{" "}
-                    {/* Changed placeholder */}
-                    {filteredSubCategories.map((subCategory) => (
-                      <option key={subCategory} value={subCategory}>
-                        {subCategory}
-                      </option>
-                    ))}
-                  </select>
+                  />
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+
+                  {/* Dropdown */}
+                  {showSubCategoryDropdown && formData.stockCategory && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+                      {filteredSubCategoriesList.map((subCategory) => (
+                        <div
+                          key={subCategory}
+                          onClick={() => handleSubCategorySelect(subCategory)}
+                          className="px-3 py-2 text-sm text-gray-900 cursor-pointer hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                        >
+                          {subCategory}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 {errors.subCategory && (
                   <p className="mt-1 text-sm text-red-600">
