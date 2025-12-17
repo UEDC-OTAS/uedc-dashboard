@@ -748,7 +748,7 @@ const ProductDetail = () => {
                 <div className="space-y-2">
                   {uploadingImages ? (
                     <div className="flex flex-col items-center justify-center">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-2"></div>
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-2"></div>
                       <p className="text-sm text-gray-600">
                         Uploading images...
                       </p>
@@ -829,7 +829,7 @@ const ProductDetail = () => {
             </button>
             <button
               type="submit"
-              className="flex gap-2 px-4 py-2 text-sm font-medium text-white bg-orange-500 border border-orange-500 rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-colors"
+              className="flex gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-blue-500 rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
