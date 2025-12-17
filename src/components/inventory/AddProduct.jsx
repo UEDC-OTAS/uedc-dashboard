@@ -16,8 +16,11 @@ const AddProduct = () => {
     quantity: "",
     price: "",
     saleCode: "",
-    isDeliverable: true,
+    isDeliverable: false,
     images: [],
+    productSpecification: "",
+    buyingGuide: "",
+    sellingGuide: "",
   });
   // const defaultImage = logo;
   const [errors, setErrors] = useState({});
@@ -219,20 +222,23 @@ const AddProduct = () => {
   const handleAddStock = async (stockData) => {
     const data = new FormData();
     data.append("name", stockData.stockName);
-    data.append("productCode", stockData.stockCode);
-    data.append("description", stockData.stockDescription);
+    data.append("saleCode", stockData.saleCode);
+    data.append("stock", stockData.quantity);
     data.append("category", stockData.stockCategory);
     data.append("subCategory", stockData.subCategory);
-    data.append("stock", stockData.quantity);
     data.append("price", stockData.price);
-    data.append("saleCode", stockData.saleCode);
-    data.append("isDeliverable", stockData.isDeliverable);
-    // Assuming you only upload the first image for now
+    data.append("description", stockData.stockDescription);
+    // Upload image file(s)
     if (stockData.images.length > 0) {
       stockData.images.forEach((img) => {
         data.append("url", img.file);
       });
     }
+    data.append("productCode", stockData.stockCode);
+    data.append("isDeliverable", stockData.isDeliverable.toString());
+    data.append("productSpecification", stockData.productSpecification || "");
+    data.append("buyingGuide", stockData.buyingGuide || "");
+    data.append("sellingGuide", stockData.sellingGuide || "");
 
     const res = await addProduct(data);
     if (res.code === 201) {
@@ -256,7 +262,12 @@ const AddProduct = () => {
       subCategory: "",
       quantity: "",
       price: "",
+      saleCode: "",
+      isDeliverable: false,
       images: [],
+      productSpecification: "",
+      buyingGuide: "",
+      sellingGuide: "",
     });
     setCategoryInput("");
     setSubCategoryInput("");
@@ -732,6 +743,60 @@ const AddProduct = () => {
                   <p>No Delivery</p>
                 </button>
               </div>
+            </div>
+            {/* Product Specification */}
+            <div>
+              <label
+                htmlFor="productSpecification"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Product Specification
+              </label>
+              <textarea
+                id="productSpecification"
+                rows={3}
+                name="productSpecification"
+                value={formData.productSpecification}
+                onChange={handleInputChange}
+                placeholder="Enter Product Specification (optional)"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300 transition-colors"
+              />
+            </div>
+            {/* Buying Guide */}
+            <div>
+              <label
+                htmlFor="buyingGuide"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Buying Guide
+              </label>
+              <textarea
+                id="buyingGuide"
+                rows={3}
+                name="buyingGuide"
+                value={formData.buyingGuide}
+                onChange={handleInputChange}
+                placeholder="Enter Buying Guide (optional)"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300 transition-colors"
+              />
+            </div>
+            {/* Selling Guide */}
+            <div>
+              <label
+                htmlFor="sellingGuide"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Selling Guide
+              </label>
+              <textarea
+                id="sellingGuide"
+                rows={3}
+                name="sellingGuide"
+                value={formData.sellingGuide}
+                onChange={handleInputChange}
+                placeholder="Enter Selling Guide (optional)"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300 transition-colors"
+              />
             </div>
           </div>
           {/* Image Upload */}

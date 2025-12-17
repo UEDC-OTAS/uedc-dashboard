@@ -44,42 +44,42 @@ function Navbar() {
       secondaryRole: "customer-support",
     },
 
-    {
-      path: "/new-order",
-      icon: ClockPlus,
-      label: "New Order",
-      role: "finance",
-      newOrderCount,
-    },
-    {
-      path: "/orders",
-      icon: ShoppingCart,
-      label: "Order",
-      role: "finance",
-      secondaryRole: "customer-support",
-    },
-    {
-      path: "/delivery",
-      icon: Truck,
-      label: "Delivery",
-      role: "delivery",
-      secondaryRole: "customer-support",
-    },
-    {
-      path: "/support",
-      icon: MdOutlineSupportAgent,
-      label: "Customer Support",
-      role: "customer-support",
-      secondaryRole: "customer-support",
-      messageCount,
-    },
-    { path: "/accs", icon: CgProfile, label: "Account", role: "admin" },
-    {
-      path: "/stock-log",
-      icon: MdOutlineWatchLater,
-      label: "Stock-Log",
-      role: "admin",
-    },
+    // {
+    //   path: "/new-order",
+    //   icon: ClockPlus,
+    //   label: "New Order",
+    //   role: "finance",
+    //   newOrderCount,
+    // },
+    // {
+    //   path: "/orders",
+    //   icon: ShoppingCart,
+    //   label: "Order",
+    //   role: "finance",
+    //   secondaryRole: "customer-support",
+    // },
+    // {
+    //   path: "/delivery",
+    //   icon: Truck,
+    //   label: "Delivery",
+    //   role: "delivery",
+    //   secondaryRole: "customer-support",
+    // },
+    // {
+    //   path: "/support",
+    //   icon: MdOutlineSupportAgent,
+    //   label: "Customer Support",
+    //   role: "customer-support",
+    //   secondaryRole: "customer-support",
+    //   messageCount,
+    // },
+    // { path: "/accs", icon: CgProfile, label: "Account", role: "admin" },
+    // {
+    //   path: "/stock-log",
+    //   icon: MdOutlineWatchLater,
+    //   label: "Stock-Log",
+    //   role: "admin",
+    // },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -179,7 +179,7 @@ function Navbar() {
                         flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200
                         ${
                           isActive(item.path)
-                            ? "bg-orange-500 text-white shadow-lg"
+                            ? "bg-blue-500 text-white shadow-lg"
                             : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                         }
                     `}
@@ -233,13 +233,6 @@ function Navbar() {
         >
           {/* Menu Toggle Button */}
           <div className="py-4 border-b border-gray-200 flex justify-between">
-            <div
-              className={`items-center justify-center ${
-                isDesktopExpanded ? "flex" : "hidden"
-              }`}
-            >
-              <img src={logo} alt="logo" className="w-10 h-10 rounded-md" />
-            </div>
             <button
               onClick={() => setIsDesktopExpanded(!isDesktopExpanded)}
               className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
@@ -264,7 +257,7 @@ function Navbar() {
                         flex items-center px-3 py-3 rounded-lg transition-all duration-300 relative group
                         ${
                           isActive(item.path)
-                            ? "bg-orange-500 text-white shadow-lg "
+                            ? "bg-blue-500 text-white shadow-lg "
                             : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                         }
  
