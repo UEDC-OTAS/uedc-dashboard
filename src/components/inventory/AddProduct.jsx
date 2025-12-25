@@ -59,7 +59,12 @@ const AddProduct = () => {
     const value = e.target.value;
     setCategoryInput(value);
     setFormData((prev) => ({ ...prev, stockCategory: value }));
-    setShowCategoryDropdown(true);
+    // Show dropdown if there are matching suggestions
+    if (value.trim()) {
+      setShowCategoryDropdown(true);
+    } else {
+      setShowCategoryDropdown(false);
+    }
 
     if (errors.stockCategory) {
       setErrors((prev) => ({
@@ -74,7 +79,12 @@ const AddProduct = () => {
     const value = e.target.value;
     setSubCategoryInput(value);
     setFormData((prev) => ({ ...prev, subCategory: value }));
-    setShowSubCategoryDropdown(true);
+    // Show dropdown if there are matching suggestions
+    if (value.trim() && formData.stockCategory) {
+      setShowSubCategoryDropdown(true);
+    } else {
+      setShowSubCategoryDropdown(false);
+    }
 
     if (errors.subCategory) {
       setErrors((prev) => ({
@@ -101,6 +111,14 @@ const AddProduct = () => {
     }
   };
 
+  // Handle category input blur - allow custom category
+  const handleCategoryBlur = () => {
+    // Keep the value as typed, just hide dropdown after a delay
+    setTimeout(() => {
+      setShowCategoryDropdown(false);
+    }, 200);
+  };
+
   // Handle subCategory selection from dropdown
   const handleSubCategorySelect = (subCategory) => {
     setSubCategoryInput(subCategory);
@@ -113,6 +131,14 @@ const AddProduct = () => {
         subCategory: "",
       }));
     }
+  };
+
+  // Handle subCategory input blur - allow custom subcategory
+  const handleSubCategoryBlur = () => {
+    // Keep the value as typed, just hide dropdown after a delay
+    setTimeout(() => {
+      setShowSubCategoryDropdown(false);
+    }, 200);
   };
 
   const handleImageUpload = (files) => {
@@ -337,12 +363,27 @@ const AddProduct = () => {
       )
     : Object.keys(allCategories);
 
+  // Check if current category input matches an existing category
+  const categoryExists = categoryInput
+    ? Object.keys(allCategories).some(
+        (cat) => cat.toLowerCase() === categoryInput.toLowerCase()
+      )
+    : false;
+
   // Get filtered sub-categories based on input
   const filteredSubCategoriesList = subCategoryInput
     ? filteredSubCategories.filter((subCat) =>
         subCat.toLowerCase().includes(subCategoryInput.toLowerCase())
       )
     : filteredSubCategories;
+
+  // Check if current subcategory input matches an existing subcategory
+  const subCategoryExists =
+    subCategoryInput && formData.stockCategory
+      ? filteredSubCategories.some(
+          (subCat) => subCat.toLowerCase() === subCategoryInput.toLowerCase()
+        )
+      : false;
 
   // Sync input states with formData
   useEffect(() => {
@@ -400,7 +441,7 @@ const AddProduct = () => {
                   placeholder="Enter Stock Name"
                   className={`
               w-full px-3 py-2 border rounded-lg text-sm
-              focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
+              focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500
               transition-colors
               ${
                 errors.stockName
@@ -433,7 +474,7 @@ const AddProduct = () => {
                 placeholder="Enter Stock Description"
                 className={`
               w-full px-3 py-2 border rounded-lg text-sm
-              focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
+              focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500
               transition-colors
               ${
                 errors.stockDescription
@@ -465,16 +506,21 @@ const AddProduct = () => {
                     name="stockCategory"
                     value={categoryInput}
                     onChange={handleCategoryInputChange}
-                    onFocus={() => setShowCategoryDropdown(true)}
+                    onFocus={() => {
+                      if (categoryInput && filteredCategories.length > 0) {
+                        setShowCategoryDropdown(true);
+                      }
+                    }}
+                    onBlur={handleCategoryBlur}
                     disabled={loadingCategories}
                     placeholder={
                       loadingCategories
                         ? "Loading categories..."
-                        : "Type or select category"
+                        : "Type new category or select from list"
                     }
                     className={`
                 w-full px-3 py-2 pr-10 border rounded-lg text-sm
-                focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
+                focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500
                 transition-colors
                 ${
                   errors.stockCategory
@@ -488,19 +534,33 @@ const AddProduct = () => {
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
 
                   {/* Dropdown */}
-                  {showCategoryDropdown && !loadingCategories && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
-                      {filteredCategories.map((category) => (
-                        <div
-                          key={category}
-                          onClick={() => handleCategorySelect(category)}
-                          className="px-3 py-2 text-sm text-gray-900 cursor-pointer hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                        >
-                          {category}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {showCategoryDropdown &&
+                    !loadingCategories &&
+                    filteredCategories.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+                        {filteredCategories.map((category) => (
+                          <div
+                            key={category}
+                            onMouseDown={(e) => {
+                              e.preventDefault(); // Prevent blur event
+                              handleCategorySelect(category);
+                            }}
+                            className="px-3 py-2 text-sm text-gray-900 cursor-pointer hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          >
+                            {category}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  {/* Show message if typing new category */}
+                  {categoryInput &&
+                    !categoryExists &&
+                    filteredCategories.length === 0 && (
+                      <p className="mt-1 text-xs text-blue-600">
+                        Press Enter or click outside to use "{categoryInput}" as
+                        a new category
+                      </p>
+                    )}
                 </div>
                 {errors.stockCategory && (
                   <p className="mt-1 text-sm text-red-600">
@@ -524,16 +584,24 @@ const AddProduct = () => {
                     name="subCategory"
                     value={subCategoryInput}
                     onChange={handleSubCategoryInputChange}
-                    onFocus={() => setShowSubCategoryDropdown(true)}
+                    onFocus={() => {
+                      if (
+                        subCategoryInput &&
+                        filteredSubCategoriesList.length > 0
+                      ) {
+                        setShowSubCategoryDropdown(true);
+                      }
+                    }}
+                    onBlur={handleSubCategoryBlur}
                     disabled={!formData.stockCategory}
                     placeholder={
                       !formData.stockCategory
                         ? "Select category first"
-                        : "Type or select sub category"
+                        : "Type new subcategory or select from list"
                     }
                     className={`
                 w-full px-3 py-2 pr-10 border rounded-lg text-sm
-                focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
+                focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500
                 transition-colors
                 ${
                   errors.subCategory
@@ -551,19 +619,34 @@ const AddProduct = () => {
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
 
                   {/* Dropdown */}
-                  {showSubCategoryDropdown && formData.stockCategory && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
-                      {filteredSubCategoriesList.map((subCategory) => (
-                        <div
-                          key={subCategory}
-                          onClick={() => handleSubCategorySelect(subCategory)}
-                          className="px-3 py-2 text-sm text-gray-900 cursor-pointer hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                        >
-                          {subCategory}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {showSubCategoryDropdown &&
+                    formData.stockCategory &&
+                    filteredSubCategoriesList.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+                        {filteredSubCategoriesList.map((subCategory) => (
+                          <div
+                            key={subCategory}
+                            onMouseDown={(e) => {
+                              e.preventDefault(); // Prevent blur event
+                              handleSubCategorySelect(subCategory);
+                            }}
+                            className="px-3 py-2 text-sm text-gray-900 cursor-pointer hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          >
+                            {subCategory}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  {/* Show message if typing new subcategory */}
+                  {subCategoryInput &&
+                    !subCategoryExists &&
+                    filteredSubCategoriesList.length === 0 &&
+                    formData.stockCategory && (
+                      <p className="mt-1 text-xs text-blue-600">
+                        Press Enter or click outside to use "{subCategoryInput}"
+                        as a new subcategory
+                      </p>
+                    )}
                 </div>
                 {errors.subCategory && (
                   <p className="mt-1 text-sm text-red-600">
@@ -592,7 +675,7 @@ const AddProduct = () => {
                   min="0"
                   className={`
                 w-full px-3 py-2 border rounded-lg text-sm
-                focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
+                focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500
                 transition-colors
                 ${
                   errors.quantity
@@ -626,7 +709,7 @@ const AddProduct = () => {
                     step="0.01"
                     className={`
                   w-full px-3 py-2 pr-12 border rounded-lg text-sm
-                  focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
+                  focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500
                   transition-colors
                   ${
                     errors.price
@@ -662,7 +745,7 @@ const AddProduct = () => {
                   placeholder="Enter Sale Code"
                   className={`
               w-full px-3 py-2 border rounded-lg text-sm
-              focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
+              focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500
               transition-colors
               ${
                 errors.saleCode ? "border-red-300 bg-red-50" : "border-gray-300"
@@ -691,7 +774,7 @@ const AddProduct = () => {
                   placeholder="Enter Stock Code"
                   className={`
               w-full px-3 py-2 border rounded-lg text-sm
-              focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
+              focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500
               transition-colors
               ${
                 errors.stockCode
@@ -721,10 +804,10 @@ const AddProduct = () => {
                   onClick={() =>
                     setFormData({ ...formData, isDeliverable: true })
                   }
-                  className={`px-4 py-2 text-sm font-mediu border rounded-full hover:text-[#02542D] hover:border-[#02542D] focus:outline-none transition-colors ${
+                  className={`px-4 py-2 text-sm font-mediu border rounded-full hover:text-blue-700 hover:border-blue-700 focus:outline-none transition-colors ${
                     formData.isDeliverable
-                      ? "bg-[#CFF7D3] text-[#02542D]"
-                      : "bg-white border border-gray-800 text-gray-500"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-white border border-gray-300 text-gray-500"
                   }`}
                 >
                   <p>Deliverable</p>
@@ -734,10 +817,10 @@ const AddProduct = () => {
                   onClick={() =>
                     setFormData({ ...formData, isDeliverable: false })
                   }
-                  className={`px-4 py-2 text-sm font-medium border rounded-full hover:text-[#02542D] hover:border-[#02542D] focus:outline-none transition-colors ${
+                  className={`px-4 py-2 text-sm font-medium border rounded-full hover:text-blue-700 hover:border-blue-700 focus:outline-none transition-colors ${
                     !formData.isDeliverable
-                      ? "bg-[#CFF7D3] text-[#02542D]"
-                      : "bg-white border border-gray-800 text-gray-500"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-white border border-gray-300 text-gray-500"
                   }`}
                 >
                   <p>No Delivery</p>
@@ -759,7 +842,7 @@ const AddProduct = () => {
                 value={formData.productSpecification}
                 onChange={handleInputChange}
                 placeholder="Enter Product Specification (optional)"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300 transition-colors"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-colors"
               />
             </div>
             {/* Buying Guide */}
@@ -777,7 +860,7 @@ const AddProduct = () => {
                 value={formData.buyingGuide}
                 onChange={handleInputChange}
                 placeholder="Enter Buying Guide (optional)"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300 transition-colors"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-colors"
               />
             </div>
             {/* Selling Guide */}
@@ -795,7 +878,7 @@ const AddProduct = () => {
                 value={formData.sellingGuide}
                 onChange={handleInputChange}
                 placeholder="Enter Selling Guide (optional)"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300 transition-colors"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-colors"
               />
             </div>
           </div>
@@ -812,8 +895,8 @@ const AddProduct = () => {
                   relative border-2 border-dashed rounded-lg p-6 text-center transition-colors
                   ${
                     dragActive
-                      ? "border-orange-400 bg-orange-50"
-                      : "border-gray-300 hover:border-gray-400"
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-300 hover:border-blue-300"
                   }
                 `}
                 onDragEnter={handleDrag}
@@ -842,7 +925,7 @@ const AddProduct = () => {
                     </svg>
                   </div>
                   <div className="text-sm text-gray-600">
-                    <span className="font-medium text-orange-600">
+                    <span className="font-medium text-blue-600">
                       Click to upload
                     </span>{" "}
                     or drag and drop
@@ -892,7 +975,7 @@ const AddProduct = () => {
           </button>
           <button
             type="submit"
-            className="px-4 py-2 text-sm font-medium text-white bg-orange-500 border border-orange-500 rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-white bg-blue-700 border border-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors"
           >
             Add Stock
           </button>
