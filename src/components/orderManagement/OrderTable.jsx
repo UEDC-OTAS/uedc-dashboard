@@ -58,7 +58,7 @@ const OrderTable = ({
   return (
     <div className="w-full mx-auto pt-6">
       {/* Tabs */}
-      <div className="flex flex-wrap gap-1 mb-6 border-b border-gray-200">
+      {/* <div className="flex flex-wrap gap-1 mb-6 border-b border-gray-200">
         {tabs.map((tab) => (
           <button
             key={tab}
@@ -76,7 +76,7 @@ const OrderTable = ({
           </button>
         ))}
 
-        {/* Export Button */}
+      
         <div className="ml-auto">
           <button
             onClick={() =>
@@ -92,10 +92,10 @@ const OrderTable = ({
             Export Excel
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* Table */}
-      <div className="bg-white rounded-lg overflow-x-hidden shadow overflow-y-auto h-[calc(100vh-230px)]">
+      <div className="bg-white rounded-lg overflow-x-hidden shadow overflow-y-auto h-[calc(100vh-160px)]">
         <table className="w-full table-auto min-w-full">
           <thead
             className="bg-gray-50 border-b border-gray-200"
@@ -108,9 +108,9 @@ const OrderTable = ({
               <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
                 Customer
               </th>
-              <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
+              {/* <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
                 Phone
-              </th>
+              </th> */}
               <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider max-w-xs">
                 Address
               </th>
@@ -120,9 +120,9 @@ const OrderTable = ({
               <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
                 Total
               </th>
-              <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
+              {/* <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
                 Actions
-              </th>
+              </th> */}
             </tr>
           </thead>
           {loading ? (
@@ -148,9 +148,8 @@ const OrderTable = ({
                 currentOrders.map((order, index) => (
                   <tr
                     key={order._id}
-                    className={`${
-                      activeOrder === order._id ? "bg-primary/10" : ""
-                    }`}
+                    className={`${activeOrder === order._id ? "bg-primary/10" : ""
+                      }`}
                   >
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                       {currentPage * itemsPerPage - itemsPerPage + index + 1}
@@ -158,14 +157,14 @@ const OrderTable = ({
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                       <p className="text-ellipsis overflow-hidden">
                         {" "}
-                        {order?.snapshotData.customerName}
+                        {order?.snapshotData.facebookName}
                       </p>
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {/* <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                       {order?.snapshotData.contactNumber}
-                    </td>
+                    </td> */}
                     <td className="px-4 py-4 text-sm text-gray-900 max-w-xs break-words">
-                      <p className="">{order?.snapshotData.address}</p>
+                      <p className="text-ellipsis overflow-hidden">{order?.snapshotData.address}</p>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                       <span>{order?.snapshotData.paymentType}</span>
@@ -175,7 +174,7 @@ const OrderTable = ({
                         {order?.snapshotData.totalAmount.toLocaleString()} MMK
                       </span>
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                    {/* <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
                         {!activeOrder &&
                           order.snapshotData.deliveryStatus === "pending" && (
@@ -219,7 +218,7 @@ const OrderTable = ({
                           <Eye size={18} />
                         </button>
                       </div>
-                    </td>
+                    </td> */}
                   </tr>
                 ))
               )}
@@ -269,11 +268,10 @@ const OrderTable = ({
                   <button
                     key={pageNum}
                     onClick={() => setCurrentPage(pageNum)}
-                    className={`px-3 py-1 text-sm border rounded ${
-                      currentPage === pageNum
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "border-gray-300 hover:bg-gray-50"
-                    }`}
+                    className={`px-3 py-1 text-sm border rounded ${currentPage === pageNum
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "border-gray-300 hover:bg-gray-50"
+                      }`}
                   >
                     {pageNum}
                   </button>
@@ -298,7 +296,7 @@ const OrderTable = ({
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div
             className="absolute inset-0 bg-black opacity-50"
-            // onClick={onClose}
+          // onClick={onClose}
           ></div>
           <div className="h-screen flex justify-center items-center z-100">
             <div className="bg-white p-6 rounded-lg w-[500px] absolute z-100 opacity-100">
@@ -335,11 +333,10 @@ const OrderTable = ({
                   disabled={
                     inputValue !== selectedOrder?.snapshotData.customerName
                   }
-                  className={`px-5 py-2.5 rounded-lg flex items-center space-x-2 transition-colors duration-200 ${
-                    inputValue !== selectedOrder?.snapshotData.customerName
-                      ? "bg-red-300 cursor-not-allowed"
-                      : "bg-red-600 text-white hover:bg-red-700"
-                  }`}
+                  className={`px-5 py-2.5 rounded-lg flex items-center space-x-2 transition-colors duration-200 ${inputValue !== selectedOrder?.snapshotData.customerName
+                    ? "bg-red-300 cursor-not-allowed"
+                    : "bg-red-600 text-white hover:bg-red-700"
+                    }`}
                 >
                   <Trash2 className="w-5 h-5" />
                   <span>Delete Order</span>

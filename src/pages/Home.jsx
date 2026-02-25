@@ -23,11 +23,11 @@ function Home() {
             <Route path="/" element={<Inventory />} />
             <Route path="/add-stock" element={<AddProduct />} />
             <Route path="/stock/:id" element={<ProductDetail />} />
-            <Route path="/new-order" element={<NewOrders />} />
+            {/* <Route path="/new-order" element={<NewOrders />} /> */}
             <Route path="/orders" element={<GetAllOrder />} />
             <Route path="/order/:id" element={<OrderDetail />} />
-            <Route path="/delivery" element={<DeliveryPage />} />
-            <Route path="/delivery/:id" element={<DeliveryDetail />} />
+            {/* <Route path="/delivery" element={<DeliveryPage />} /> */}
+            {/* <Route path="/delivery/:id" element={<DeliveryDetail />} /> */}
             <Route path="/support" element={<CustomerSupport />} />
             <Route path="/accs" element={<Accounts />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />

@@ -48,7 +48,7 @@ function GetAllOrder() {
   const [orders, setOrders] = useState([]);
   const [allOrders, setAllOrders] = useState([]); // Store all orders for search
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState("confirmed");
   const [activePage, setActivePage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
@@ -226,9 +226,9 @@ function GetAllOrder() {
             {format(startDate, "MMMM d,yyyy") == format(endDate, "MMMM d,yyyy")
               ? format(startDate, "dd-MM-yyyy")
               : `${format(startDate, "dd-MM-yyyy")} - ${format(
-                  endDate,
-                  "dd-MM-yyyy"
-                )}`}
+                endDate,
+                "dd-MM-yyyy"
+              )}`}
           </button>
         </div>
       </div>
@@ -272,9 +272,8 @@ function GetAllOrder() {
 
       <div className="flex">
         <div
-          className={`transition-all duration-300 ${
-            selectedOrder ? "w-2/3" : "w-full"
-          }`}
+          className={`transition-all duration-300 ${selectedOrder ? "w-2/3" : "w-full"
+            }`}
         >
           <OrderTable
             orders={orders}
@@ -291,9 +290,8 @@ function GetAllOrder() {
         </div>
 
         <div
-          className={`transition-all duration-300 ${
-            selectedOrder ? "w-1/3" : "w-0"
-          }`}
+          className={`transition-all duration-300 ${selectedOrder ? "w-1/3" : "w-0"
+            }`}
         >
           {selectedOrder && (
             <OrderInfo

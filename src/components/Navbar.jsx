@@ -20,10 +20,10 @@ import getAllOrders from "../api/orderApi/getAllOrders";
 import io from "socket.io-client";
 import getAllTickets from "../api/support/GetAllTicket";
 
-const socket = io.connect(import.meta.env.VITE_APP_API, {
-  transports: ["websocket"],
-  secure: true,
-});
+// const socket = io.connect(import.meta.env.VITE_APP_API, {
+//   transports: ["websocket"],
+//   secure: true,
+// });
 
 function Navbar() {
   const username = JSON.parse(localStorage.getItem("uedc-user"))?.name;
@@ -32,7 +32,7 @@ function Navbar() {
   const [isDesktopExpanded, setIsDesktopExpanded] = useState(false);
   const { newOrderCount, setNewOrderCount, messageCount, setMessageCount } =
     useContext(NumberContext);
-  console.log("messageCount", messageCount, "newOrderCount", newOrderCount);
+  // console.log("messageCount", messageCount, "newOrderCount", newOrderCount);
   const location = useLocation();
   const navigate = useNavigate();
   const navItems = [
@@ -44,13 +44,13 @@ function Navbar() {
       secondaryRole: "customer-support",
     },
 
-    {
-      path: "/new-order",
-      icon: ClockPlus,
-      label: "New Order",
-      role: "finance",
-      newOrderCount,
-    },
+    // {
+    //   path: "/new-order",
+    //   icon: ClockPlus,
+    //   label: "New Order",
+    //   role: "finance",
+    //   newOrderCount,
+    // },
     {
       path: "/orders",
       icon: ShoppingCart,
@@ -58,21 +58,21 @@ function Navbar() {
       role: "finance",
       secondaryRole: "customer-support",
     },
-    {
-      path: "/delivery",
-      icon: Truck,
-      label: "Delivery",
-      role: "delivery",
-      secondaryRole: "customer-support",
-    },
-    {
-      path: "/support",
-      icon: MdOutlineSupportAgent,
-      label: "Customer Support",
-      role: "customer-support",
-      secondaryRole: "customer-support",
-      messageCount,
-    },
+    // {
+    //   path: "/delivery",
+    //   icon: Truck,
+    //   label: "Delivery",
+    //   role: "delivery",
+    //   secondaryRole: "customer-support",
+    // },
+    // {
+    //   path: "/support",
+    //   icon: MdOutlineSupportAgent,
+    //   label: "Customer Support",
+    //   role: "customer-support",
+    //   secondaryRole: "customer-support",
+    //   messageCount,
+    // },
     { path: "/accs", icon: CgProfile, label: "Account", role: "admin" },
     {
       path: "/stock-log",
@@ -90,42 +90,42 @@ function Navbar() {
     window.location.href = "/login";
   };
 
-  const getNewOrderCount = async () => {
-    const response = await getAllOrders("pending");
-    if (response.code === 200) {
-      // setOrders(response.data);
-      // console.log(response.totalCount);
-      setNewOrderCount(response.totalCount);
-    }
-  };
+  // const getNewOrderCount = async () => {
+  //   const response = await getAllOrders("pending");
+  //   if (response.code === 200) {
+  //     // setOrders(response.data);
+  //     // console.log(response.totalCount);
+  //     setNewOrderCount(response.totalCount);
+  //   }
+  // };
 
-  const getMessageCount = async () => {
-    const response = await getAllTickets();
-    const haveUnseen = response.data.filter((t) => !t.hasSeen && !t.hasSolved);
-    setMessageCount(haveUnseen.length);
-    // console.log("haveUnseen", haveUnseen);
-    // console.log("messageCount in Function", messageCount);
-  };
+  // const getMessageCount = async () => {
+  //   const response = await getAllTickets();
+  //   const haveUnseen = response.data.filter((t) => !t.hasSeen && !t.hasSolved);
+  //   setMessageCount(haveUnseen.length);
+  //   // console.log("haveUnseen", haveUnseen);
+  //   // console.log("messageCount in Function", messageCount);
+  // };
 
   useEffect(() => {
-    getNewOrderCount();
-    getMessageCount();
+    // getNewOrderCount();
+    // getMessageCount();
 
-    if (role !== "inventory" && role !== "delivery") {
-      socket.on("orderFinalized", (data) => {
-        // console.log("data", data);
-        if (data.snapshotData.deliveryStatus === "pending") {
-          setNewOrderCount((prev) => prev + 1);
-        }
-      });
-    }
+    // if (role !== "inventory" && role !== "delivery") {
+    //   socket.on("orderFinalized", (data) => {
+    //     // console.log("data", data);
+    //     if (data.snapshotData.deliveryStatus === "pending") {
+    //       setNewOrderCount((prev) => prev + 1);
+    //     }
+    //   });
+    // }
 
-    if (role === "customer-support" || role === "admin") {
-      socket.on("newCustomerSupportTicket", (data) => {
-        // console.log("messageCount", messageCount);
-        setMessageCount((prev) => prev + 1);
-      });
-    }
+    // if (role === "customer-support" || role === "admin") {
+    //   socket.on("newCustomerSupportTicket", (data) => {
+    //     // console.log("messageCount", messageCount);
+    //     setMessageCount((prev) => prev + 1);
+    //   });
+    // }
   }, []);
 
   // console.log("messageCount", messageCount);
@@ -177,10 +177,9 @@ function Navbar() {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`
                         flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200
-                        ${
-                          isActive(item.path)
-                            ? "bg-orange-500 text-white shadow-lg"
-                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        ${isActive(item.path)
+                          ? "bg-orange-500 text-white shadow-lg"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                         }
                     `}
                     >
@@ -234,9 +233,8 @@ function Navbar() {
           {/* Menu Toggle Button */}
           <div className="py-4 border-b border-gray-200 flex justify-between">
             <div
-              className={`items-center justify-center ${
-                isDesktopExpanded ? "flex" : "hidden"
-              }`}
+              className={`items-center justify-center ${isDesktopExpanded ? "flex" : "hidden"
+                }`}
             >
               <img src={logo} alt="logo" className="w-10 h-10 rounded-md" />
             </div>
@@ -256,17 +254,16 @@ function Navbar() {
                 return (
                   <li key={item.path} className="relative">
                     {role === "admin" ||
-                    role === item.secondaryRole ||
-                    role === item.role ? (
+                      role === item.secondaryRole ||
+                      role === item.role ? (
                       <Link
                         to={item.path}
                         className={`
                         flex items-center px-3 py-3 rounded-lg transition-all duration-300 relative group
-                        ${
-                          isActive(item.path)
+                        ${isActive(item.path)
                             ? "bg-orange-500 text-white shadow-lg "
                             : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                        }
+                          }
  
                       `}
                       >
@@ -287,17 +284,15 @@ function Navbar() {
                     ) : null}
                     {!isDesktopExpanded && (
                       <div
-                        className={`${
-                          item.path === "/new-order" ? "" : "hidden"
-                        }`}
+                        className={`${item.path === "/new-order" ? "" : "hidden"
+                          }`}
                       >
                         {item.newOrderCount > 0 && item.newOrderCount <= 9 && (
                           <span
-                            className={`absolute bottom-7 right-0 left-8 inline-flex items-center justify-center  px-[12px] py-[3px] text-xs font-medium  rounded-full ${
-                              location.pathname === "/new-order"
-                                ? "bg-white text-primary"
-                                : "bg-primary text-white"
-                            }`}
+                            className={`absolute bottom-7 right-0 left-8 inline-flex items-center justify-center  px-[12px] py-[3px] text-xs font-medium  rounded-full ${location.pathname === "/new-order"
+                              ? "bg-white text-primary"
+                              : "bg-primary text-white"
+                              }`}
                           >
                             {item.newOrderCount}
                           </span>
@@ -314,11 +309,10 @@ function Navbar() {
                       <div>
                         {item.messageCount > 0 && item.messageCount <= 9 && (
                           <span
-                            className={`absolute bottom-7 right-0 left-8 inline-flex items-center justify-center  px-[12px] py-[3px] text-xs font-medium  rounded-full ${
-                              location.pathname === "/support"
-                                ? "bg-white text-primary"
-                                : "bg-primary text-white"
-                            }`}
+                            className={`absolute bottom-7 right-0 left-8 inline-flex items-center justify-center  px-[12px] py-[3px] text-xs font-medium  rounded-full ${location.pathname === "/support"
+                              ? "bg-white text-primary"
+                              : "bg-primary text-white"
+                              }`}
                           >
                             {item.messageCount}
                           </span>
