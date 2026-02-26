@@ -89,11 +89,10 @@ const StockTable = ({ logs }) => {
                     </td>
                     <td className="px-4 font-medium py-4 whitespace-nowrap text-sm text-gray-900">
                       <div
-                        className={`flex  w-[60px] justify-center items-center px-2 py-1 rounded-xl ${
-                          log.action === "add"
+                        className={`flex  justify-center items-center px-2 py-1 rounded-xl ${log.action === "add"
                             ? "bg-[#EBFFEE] text-[#02542D]"
                             : "bg-[#FEE9E7] text-[#900B09]"
-                        }`}
+                          }`}
                       >
                         <div>
                           <span>{log.action === "add" ? "+" : ""}</span>
@@ -156,11 +155,10 @@ const StockTable = ({ logs }) => {
                   <button
                     key={pageNum}
                     onClick={() => setCurrentPage(pageNum)}
-                    className={`px-3 py-1 text-sm border rounded ${
-                      currentPage === pageNum
+                    className={`px-3 py-1 text-sm border rounded ${currentPage === pageNum
                         ? "bg-blue-500 text-white border-blue-500"
                         : "border-gray-300 hover:bg-gray-50"
-                    }`}
+                      }`}
                   >
                     {pageNum}
                   </button>
