@@ -12,10 +12,10 @@ import SearchBar from "../utli/SearchBar";
 import { startOfDay, endOfDay } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import searchOrder from "../../api/orderApi/SearchOrder";
-const socket = io.connect(import.meta.env.VITE_APP_API, {
-  transports: ["websocket"],
-  secure: true,
-});
+// const socket = io.connect(import.meta.env.VITE_APP_API, {
+//   transports: ["websocket"],
+//   secure: true,
+// });
 
 function GetAllOrder() {
   const navigate = useNavigate();
@@ -163,38 +163,38 @@ function GetAllOrder() {
     getOrders();
   }, [activeTab, startDate, endDate]);
 
-  useEffect(() => {
-    // Connection established
-    socket.on("connect", () => {
-      console.log("Connected to socket.io server");
-    });
+  // useEffect(() => {
+  //   // Connection established
+  //   socket.on("connect", () => {
+  //     console.log("Connected to socket.io server");
+  //   });
 
-    socket.on("orderStatusUpdated", (data) => {
-      // console.log("data", data);
-      if (activeTab === "pending") {
-        const handleRemove = (value) => {
-          setOrders((prev) => prev.filter((item) => item._id !== value));
-        };
-        handleRemove(data.orderId);
-      }
-    });
+  //   socket.on("orderStatusUpdated", (data) => {
+  //     // console.log("data", data);
+  //     if (activeTab === "pending") {
+  //       const handleRemove = (value) => {
+  //         setOrders((prev) => prev.filter((item) => item._id !== value));
+  //       };
+  //       handleRemove(data.orderId);
+  //     }
+  //   });
 
-    socket.on("orderSoftDeleted", (data) => {
-      // console.log("data", data);
-      if (activeTab === "cancelled") {
-        const handleRemove = (value) => {
-          setOrders((prev) => prev.filter((item) => item._id !== value));
-        };
-        handleRemove(data.orderId);
-      }
-    });
+  //   socket.on("orderSoftDeleted", (data) => {
+  //     // console.log("data", data);
+  //     if (activeTab === "cancelled") {
+  //       const handleRemove = (value) => {
+  //         setOrders((prev) => prev.filter((item) => item._id !== value));
+  //       };
+  //       handleRemove(data.orderId);
+  //     }
+  //   });
 
-    // Cleanup
-    return () => {
-      socket.off("orderStatusUpdated");
-      socket.off("orderSoftDeleted");
-    };
-  }, []);
+  //   // Cleanup
+  //   return () => {
+  //     socket.off("orderStatusUpdated");
+  //     socket.off("orderSoftDeleted");
+  //   };
+  // }, []);
 
   return (
     <div className="px-4">
