@@ -114,21 +114,21 @@ const OrderTable = ({
               <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider max-w-xs">
                 Address
               </th>
-              <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
-                Quantity
+              <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-48">
+                Items
               </th>
+              {/* <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
+                Payment
+              </th> */}
               <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
                 Total
               </th>
-              {/* <th className="px-4 py-4 text-left text-xs font-medium text-black uppercase tracking-wider">
-                Actions
-              </th> */}
             </tr>
           </thead>
           {loading ? (
             <tbody>
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                   loading...
                 </td>
               </tr>
@@ -138,7 +138,7 @@ const OrderTable = ({
               {currentOrders.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={6}
                     className="px-4 py-8 text-center text-gray-500"
                   >
                     No orders found
@@ -155,23 +155,39 @@ const OrderTable = ({
                       {currentPage * itemsPerPage - itemsPerPage + index + 1}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <p className="text-ellipsis overflow-hidden">
-                        {" "}
-                        {order?.snapshotData.facebookName}
+                      <p className="font-medium text-gray-900">
+                        {order?.snapshotData.facebookName || "N/A"}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {order?.snapshotData.contactNumber}
                       </p>
                     </td>
-                    {/* <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {order?.snapshotData.contactNumber}
+                    <td className="px-4 py-4 text-sm text-gray-900 max-w-xs">
+                      <p className="line-clamp-2" title={order?.snapshotData.address}>
+                        {order?.snapshotData.address || "N/A"}
+                      </p>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      <div className="flex flex-col gap-1">
+                        {order?.snapshotData.orderInfo?.map((item, idx) => (
+                          <div key={idx} className="bg-gray-50 p-1.5 rounded border border-gray-100">
+                            <div className="font-medium text-xs text-gray-800 break-words">{item.name}</div>
+                            <div className="text-[10px] text-primary font-bold">Qty: {item.quantity}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                    {/* <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">
+                      <span className={`px-2 py-1 rounded-full text-xs ${order?.snapshotData.paymentType === 'cash-on-delivery'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-green-100 text-green-700'
+                        }`}>
+                        {order?.snapshotData.paymentType?.replace(/-/g, ' ')}
+                      </span>
                     </td> */}
-                    <td className="px-4 py-4 text-sm text-gray-900 max-w-xs break-words">
-                      <p className="text-ellipsis overflow-hidden">{order?.snapshotData.address}</p>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <span>{order?.snapshotData.paymentType}</span>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <span>
-                        {order?.snapshotData.totalAmount.toLocaleString()} MMK
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border-l">
+                      <span className="font-bold text-gray-900">
+                        {order?.snapshotData.totalAmount?.toLocaleString() || "0"} MMK
                       </span>
                     </td>
                     {/* <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
