@@ -123,9 +123,8 @@ const AddStaffModal = ({ isOpen, onClose, onSubmit }) => {
               w-full px-3 py-2 border rounded-lg text-sm
               focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
               transition-colors
-              ${
-                errors.username ? "border-red-300 bg-red-50" : "border-gray-300"
-              }
+              ${errors.username ? "border-red-300 bg-red-50" : "border-gray-300"
+                  }
             `}
               />
               {errors.username && (
@@ -156,9 +155,9 @@ const AddStaffModal = ({ isOpen, onClose, onSubmit }) => {
                 <option value="">Select Department</option>
                 <option value="admin">Admin</option>
                 <option value="inventory">Inventory</option>
-                <option value="finance">Finance</option>
+                {/* <option value="finance">Finance</option>
                 <option value="delivery">Delivery</option>
-                <option value="customer-support">Customer Support</option>
+                <option value="customer-support">Customer Support</option> */}
               </select>
               {errors.role && (
                 <p className="mt-1 text-sm text-red-600">{errors.role}</p>
@@ -185,9 +184,8 @@ const AddStaffModal = ({ isOpen, onClose, onSubmit }) => {
               w-full px-3 py-2 border rounded-lg text-sm
               focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
               transition-colors
-              ${
-                errors.password ? "border-red-300 bg-red-50" : "border-gray-300"
-              }
+              ${errors.password ? "border-red-300 bg-red-50" : "border-gray-300"
+                    }
             `}
                 />
                 <button
@@ -223,11 +221,10 @@ const AddStaffModal = ({ isOpen, onClose, onSubmit }) => {
               w-full px-3 py-2 border rounded-lg text-sm
               focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300
               transition-colors
-              ${
-                errors.confirmPassword
-                  ? "border-red-300 bg-red-50"
-                  : "border-gray-300"
-              }
+              ${errors.confirmPassword
+                      ? "border-red-300 bg-red-50"
+                      : "border-gray-300"
+                    }
             `}
                 />
                 <button

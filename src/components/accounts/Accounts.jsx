@@ -12,7 +12,7 @@ function Accounts() {
 
   const fetchUsers = async () => {
     const res = await getAllUsers();
-    console.log(res);
+    // console.log(res);
     if (res.code === 200) {
       const filteredUsers = res.data.filter((user) => user.isDeleted !== true);
       setUsers(filteredUsers);
