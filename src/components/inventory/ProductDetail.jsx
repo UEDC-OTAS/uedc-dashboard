@@ -152,7 +152,7 @@ const ProductDetail = () => {
       const totalImages = formData.images.length + validFiles.length;
       if (totalImages > 5) {
         alert(
-          `Maximum 5 images allowed. You currently have ${formData.images.length} existing images.`
+          `Maximum 5 images allowed. You currently have ${formData.images.length} existing images.`,
         );
         return;
       }
@@ -285,6 +285,7 @@ const ProductDetail = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("work");
 
     if (validateForm()) {
       handleUpdateStock(formData);

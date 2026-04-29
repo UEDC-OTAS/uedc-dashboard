@@ -172,7 +172,16 @@ const OrderTable = ({
                         {order?.snapshotData.orderInfo?.map((item, idx) => (
                           <div key={idx} className="bg-gray-50 p-1.5 rounded border border-gray-100">
                             <div className="font-medium text-xs text-gray-800 break-words">{item.name}</div>
-                            <div className="text-[10px] text-primary font-bold">Qty: {item.quantity}</div>
+                            <div className="flex items-center justify-between mt-1">
+                              {item.saleCode && (
+                                <span className="text-[12px] text-gray-500 font-bold">
+                                  Code: {item.saleCode}
+                                </span>
+                              )}
+                              <span className="text-[10px] text-primary font-bold ml-auto">
+                                Qty: {item.quantity}
+                              </span>
+                            </div>
                           </div>
                         ))}
                       </div>

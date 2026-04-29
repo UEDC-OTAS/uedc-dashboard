@@ -118,10 +118,29 @@ function GetAllOrder() {
           snapshotData: { ...item },
         };
       });
-      setOrders(orderArray);
+
+      // Frontend search for salecode in allOrders
+      const lowerSearch = name.toLowerCase();
+      const frontendMatches = allOrders.filter((order) => {
+        const matchSaleCode = order.snapshotData?.orderInfo?.some(
+          (item) => item.saleCode && item.saleCode.toLowerCase().includes(lowerSearch)
+        );
+        return matchSaleCode;
+      });
+
+      // Combine and deduplicate
+      const combined = [...orderArray];
+      frontendMatches.forEach((feOrder) => {
+        if (!combined.some((c) => c._id === feOrder._id)) {
+          combined.push(feOrder);
+        }
+      });
+
+      setOrders(combined);
     } catch (error) {
       console.error("Search error:", error);
-      setOrders([]);
+      // Fallback to frontend search
+
     } finally {
       setSearchLoading(false);
     }
@@ -129,35 +148,17 @@ function GetAllOrder() {
 
   // Debounced search effect - triggers API call as user types
   useEffect(() => {
-    // Skip if searchTerm is empty (will be handled by onClear)
     if (searchTerm.trim() === "") {
+      setOrders(allOrders);
       return;
     }
 
-    const timeoutId = setTimeout(async () => {
-      setSearchLoading(true);
-      try {
-        const response = await searchOrder(searchTerm);
-        const filterOrder = response.data.filter((item) => {
-          return item.deliveryStatus === activeTab;
-        });
-        const orderArray = filterOrder.map((item) => {
-          return {
-            _id: item._id,
-            snapshotData: { ...item },
-          };
-        });
-        setOrders(orderArray);
-      } catch (error) {
-        console.error("Search error:", error);
-        setOrders([]);
-      } finally {
-        setSearchLoading(false);
-      }
+    const timeoutId = setTimeout(() => {
+      searchFunction(searchTerm);
     }, 300); // 300ms debounce delay
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm, activeTab]);
+  }, [searchTerm, activeTab, allOrders]);
 
   useEffect(() => {
     getOrders();
@@ -207,7 +208,7 @@ function GetAllOrder() {
               onSearch={(name) => {
                 setSearchTerm(name);
               }}
-              placeholder="Search Customer Name"
+              placeholder="Search Name or SaleCode"
               onClick={searchFunction}
               onClear={() => {
                 setSearchTerm("");

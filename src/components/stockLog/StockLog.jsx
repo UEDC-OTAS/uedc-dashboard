@@ -6,7 +6,6 @@ import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import SearchBar from "../utli/SearchBar";
 import { startOfDay, endOfDay } from "date-fns";
-import { useNavigate } from "react-router-dom";
 import getStocklogs from "../../api/Stocklogs/getStocklogs";
 import StockTable from "./StockTable";
 
@@ -38,6 +37,12 @@ function StockLog() {
     },
   ]);
   const [logs, setLogs] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredLogs = logs.filter((log) => {
+    if (!searchQuery) return true;
+    return log?.stockId?.name?.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   const ApplyDate = () => {
     setStartDate(startOfDay(dateRange[0].startDate));
@@ -75,11 +80,11 @@ function StockLog() {
 
           <div className="flex items-center justify-between gap-10 lg:mt-0">
             <div className="w-auto md:w-[400px]">
-              {/* <SearchBar
-                onSearch={(name) => (!name ? getLogs() : null)}
-                placeholder="Search Customer Name"
-                onClick={searchFunction}
-              /> */}
+              <SearchBar
+                onSearch={(val) => setSearchQuery(val)}
+                onClear={() => setSearchQuery("")}
+                placeholder="Search Product Name"
+              />
             </div>
             <button
               onClick={() => {
@@ -90,12 +95,12 @@ function StockLog() {
             >
               <FaCalendarAlt className="text-color" />
               {format(startDate, "MMMM d,yyyy") ==
-              format(endDate, "MMMM d,yyyy")
+                format(endDate, "MMMM d,yyyy")
                 ? format(startDate, "dd-MM-yyyy")
                 : `${format(startDate, "dd-MM-yyyy")} - ${format(
-                    endDate,
-                    "dd-MM-yyyy"
-                  )}`}
+                  endDate,
+                  "dd-MM-yyyy"
+                )}`}
             </button>
           </div>
         </div>
@@ -139,7 +144,7 @@ function StockLog() {
 
         <div className="mt-5">
           <div className={`transition-all duration-300`}>
-            <StockTable logs={logs} />
+            <StockTable logs={filteredLogs} />
           </div>
         </div>
       </div>
